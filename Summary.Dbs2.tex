@@ -110,13 +110,13 @@ urlcolor=black
 \tableofcontents
 \clearpage
 
-\chapter{Repetition Dbs1}
+\ch{Repetition Dbs1}
 
 \exam{'group by' wichtig}
 \definition{OLTP}{Online-Transaction-Processing}
 
 \se{ANSI Modell}
-%\img{img/v1.1.jpg}{ANSI 3-Ebenen Modell}{1}{}
+\img{img/v1.1.jpg}{ANSI 3-Ebenen Modell}{1}{}
 
 \se{ACID}
 \ul
@@ -130,6 +130,76 @@ sind dauerhaft, sie dürfen nicht aufgrund von Fehlern
 verloren gehen
 \ulE
 
+\ch{Oracle's PL/SQL}
+\expl{PL/SQL}{SQL ist deklarativ und beschreibt nur was, nicht wie. \textbf{Procedural Language} ermöglicht das wie.}
 
+\img{img/v1.2.jpg}{}{0.75}{}
+\ul
+	\li wird kompiliert
+	\li wird nahe bei den Daten im DD abgelegt
+	\li Innerhalb von PL/SQL darf SQL ausgeführt werden, Resultate landen in Variablen
+\ulE
+
+\img{img/v1.3.jpg}{}{0.75}{}
+\ul
+	\li 'DECLARE'-Block optional
+	\li Server soll Output zurückschicken: 'SQL> SET SERVEROUTPUT ON'
+	\li Letzter Fehler anzeigen: 
+	\li PL/SQL Blöcke müssen mit Slash abgeschlossen werden:
+		\begin{verbatim}
+		SQL> BEGIN
+		dbms_output.put_line('Welcome to PL/SQL');
+		END;
+		/
+		\end{verbatim}
+	\li SQL> EXEC 'welcome' führt die Funktion welcome aus:
+		\begin{verbatim}
+		CREATE OR REPLACE PROCEDURE welcome
+		IS
+		user_name VARCHAR2(8) := user;
+		BEGIN -- 'BEGIN'
+		dbms_output.put_line('Welcome to
+		PL/SQL, ' || user_name || '!');
+		END;
+		/
+		\end{verbatim}
+	\li Blöcke dürfen verschachtelt werden: im BEGIN Block dürfen wiederum DECLARE, BEGIN, End, ... Blöcke stehen.
+	\li Verschachtelte Blöcke schränken Sichtbarkeit ein
+	\li Resultate werden durch 'INTO varname' in Variablen gespeichert
+	\li Datentyp von Tabelle übernehmen: ' Tabelle.Spalte\%TYPE;'
+	\li Systemvariablen: USER, ...
+	\li Exceptions:
+		\begin{verbatim}
+		WHEN NO_DATA_FOUND THEN
+		/*System Exception:
+		SELECT INTO liefert keinen Wert*/
+		RAISE;
+		WHEN TOO_MANY_ROWS THEN
+		/*SELECT INTO* liefert mehr als einen Wert*/
+		RAISE;
+		WHEN DUP_VAL_ON_INDEX THEN
+		/*Projektzuteilung existiert bereits*/
+		\end{verbatim}
+\ulE
+
+\img{img/v1.4.jpg}{PL/SQL Block mit DECLARE, BEGIN EXCEPTION und END Block}{0.75}{}
+
+\se{Exceptions}
+Wie in Java.
+\img{img/v1.5.jpg}{}{0.75}{}
+\img{img/v1.6.jpg}{Benannte Benutzer AUsnahmen}{0.75}{}
+
+\se{Stored Procedures}
+\expl{SP}{DBS Subroutine}
+\ul
+	\li Objekte wie Tabellen, die Rechte und User zugeteilt werden
+\ulE
+
+\img{img/v1.7.jpg}{}{0.75}{}
+
+\se{Funktionen}
+\expl{Unterschied Procedure und Funktionen}{Funktionen können im SQL verwendet werden (Bps. AVG), Procedures können nur alleine ausgeführt werden.}
+
+\important{Procedure kann nur im PL/SQL aufgerufen werden, Funktion sowohl im SQL wie PL/SQL}
 
 \end{document}
