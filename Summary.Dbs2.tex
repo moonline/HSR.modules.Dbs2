@@ -14,6 +14,10 @@
 
 %quellcode
 \usepackage{listings}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\let\verbatiminput=\verbatimtabinput
+\def\verbatimtabsize{4\relax} 
 
 %tabellen
 \usepackage{tabularx}
@@ -201,5 +205,137 @@ Wie in Java.
 \expl{Unterschied Procedure und Funktionen}{Funktionen können im SQL verwendet werden (Bps. AVG), Procedures können nur alleine ausgeführt werden.}
 
 \important{Procedure kann nur im PL/SQL aufgerufen werden, Funktion sowohl im SQL wie PL/SQL}
+
+\img{img/v1.8.jpg}{Vergleich}{0.75}{}
+
+\ch{Stored Procedure in PL/SQL, Java und Python}
+\ul
+	\li SP werden als Block in der Datenbank abgelegt. 
+	\li Im Gegensatz zum anon. Block wird die P beim Aufruf geparst und in der DB gespeichert.
+	\li Vorteile: Performance, Security (Zentrale Überprüfungen, Zugriffsschutz)
+	\li Nachteil: SP herstellerspezifisch, Probleme mit Optimierer
+\ulE
+
+\examp{Security}{Security: zum Lesen: Views, zum Schreiben: brauchen keine schreibrechte, nur ausführungsrechte auf Procedure. Procedure definiert genau, was übergeben werden soll und erlaubt nur dies.}
+
+\exam{Prüfungsrelevant: \\
+	1. Variablen (DECLARE), Blöcke (BEGIN...END), Konst.
+	(CONSTANT) \\
+	2. Typen (SQL; \%TYPE; NUMBER, SUBTYPE) \\
+	3. Conditional Control Statements (IF...END IF; ) \\
+	4. Sequential Control Statements (GOTO, NULL) \\
+	5. Loops (LOOP, FOR...LOOP, WHILE...LOOP) \\
+	6. Exception Handlers (EXCEPTION, RAISE, \\
+	7. Built-In Functions: Character; Date; Numeric, LOB, and
+	Miscellaneous Fns., Conversion Fns. \\
+	8. Prozeduren und Funktionen (CREATE PROCEDURE...AS) \\
+	9. Packages (CREATE PACKAGE; CREATE PACKAGE...BODY ) \\
+	10. Cursors (FOR record\_index IN cursor\_name LOOP) \\
+	11. Record Types (TYPE first\_rectype IS RECORD (var1
+	VARCHAR2(100)), \%ROWTYPE)
+}
+
+
+\ch{IO}
+\ul
+	\li SET ist nicht Teil von SQL, sondern SQL plus (pakage).
+	\li Output: DBMS\_OUTPUT.PUT\_LINE (Putline ist wie eine Pipe, hat nichts mit der Konsole zu tun \ra schreibt in Buffer) \\ Wichtig: SET SERVEROUTPUT ON
+	\li Input: DBMS\_OUTPUT.GET\_LINE(:buffer, :status); \\ Wichtig: set echo on;
+\ulE
+
+
+\ch{Packages}
+\ul
+	\li Gruppieren PL/SQL Typen und Unterprogramme
+	\li  Können nicht aufgerufen, parameterized, oder verschachtelt werden
+	\li Bsp:dbms\_output, user\_lock
+ \ulE
+ 
+ \se{Package Deploying}
+ \img{img/v2.1.jpg}{}{0.75}{}
+ \img{img/v2.2.jpg}{}{0.75}{}
+
+\sse{Bsp1}
+\begin{verbatim}
+CREATE OR REPLACE PACKAGE AngestelltenVerwaltung AS
+...
+FUNCTION AngEinstellen (Name VARCHAR2,..
+..
+END AngestelltenVerwaltung;
+
+\end{verbatim}
+
+\sse{Bsp2}
+\begin{verbatim}
+CREATE OR REPLACE PACKAGE BODY AngestelltenVerwaltung AS
+...
+	PROCEDURE GetAngOfAbt ( AbtNo IN NUMBER,
+		..
+		IS
+		BEGIN
+		...
+	END GetAngOfAbt;
+	...
+END AngestelltenVerwaltung;
+
+\end{verbatim}
+
+
+\ch{Cursor}
+\img{img/v2.3.jpg}{Cursor Verarbeitung}{0.75}{}
+\img{img/v2.4.jpg}{Cursor Prinzip}{0.75}{}
+\img{img/v2.5.jpg}{Cursor Variable}{0.75}{}
+
+\sse{Deklaration Bsp}
+\begin{verbatim}
+DECLARE
+CurrAbtNr integer := 1;
+CURSOR AngCursor IS
+SELECT Salaer, PersNr FROM Angestellter
+WHERE Angestellter.AbtNr=CurrAbtNr;
+SalSumme NUMBER (8, 2) := 0;
+AngSalaer Angestellter.Salaer%TYPE;
+AngPersNr Angestellter.PersNr%TYPE;
+\end{verbatim}
+
+\sse{Cursor Verarbeitung}
+\begin{verbatim}
+BEGIN
+OPEN AngCursor; /*SQL-Abfrage starten und Resultat in Puffer
+speichern*/
+LOOP /*Iteration ueber Resulatmenge*/
+FETCH AngCursor INTO AngSalaer, AngPersNr;
+EXIT WHEN AngCursor%NOTFOUND OR AngCursor%ROWCOUNT>10
+SalSumme := SalSumme + AngSalaer;
+dbms_output.put_line('Angstellter PersNr: ' || AngPersNr ||
+' Salaer: ' || AngSalaer);
+END LOOP;
+CLOSE AngCursor;
+dbms_output.put_line('Salaersumme: ' || SalSumme);
+END;
+
+\end{verbatim}
+
+\important{String werden in 'einfach' Hochkommas geschrieben!}
+
+\sse{Cursor mit Parametern}
+\begin{verbatim}
+DECLARE
+CurrAbtNr integer;
+CURSOR AngCursor (AbtId IN Abteilung.AbtNr%TYPE) IS
+SELECT Salaer, PersNr FROM Angestellter
+WHERE Angestellter.AbtNr=AbtId;
+SalSumme NUMBER (8, 2) := 0;
+AngRec
+ AngCursor%ROWTYPE;
+
+\end{verbatim}
+
+\sse{Cursor for Update}
+Cursor muss für Update ``angekündigt'' werden.
+\img{img/v2.6.jpg}{}{0.75}{}
+
+\sse{Cursor Attribute}
+\img{img/v2.7.jpg}{}{0.75}{}
 
 \end{document}

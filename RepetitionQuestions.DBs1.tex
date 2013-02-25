@@ -46,7 +46,7 @@
 \usepackage{ifthen}
 
 %Dokumenteigenschaften
-\title{Repetitionsfragen CN1}
+\title{Repetitionsfragen Dbs2}
 \author{Tobias Blaser}
 \date{\today{}, Rapperswil}
 
@@ -73,7 +73,9 @@
 
 \usepackage{changepage}
 
-\input{shortcuts}
+% Abkürzungen für Kapitel, Titel und Listen
+\input{commands/shortcutsListAndChapter}
+\input{commands/TextStructuringBoxes}
 
 %links, verlinktes Inhaltsverzeichnis, PDF Inhaltsverzeichnis
 \usepackage[bookmarks=true,
@@ -97,24 +99,22 @@ urlcolor=black
 \tableofcontents
 \clearpage
 
-\ch{RFID}
+\ch{Repetition Dbs1}
+\ol
+	\li Erklären Sie das ANSI 3-Ebenen Modell
+	\li Erklären SIe OLTP
+	\li Nennen Sie die vier ACID Kriterien. Wozu werden Sie verwendet?
+	\li Lesen Sie mit einer group by Anfrage aus einer Liste mit Absolventen die Studiengangsnotendurchschnitte heraus.
+\olS
+
+\ch{Oracle PL/SQL}
 \olR
-	\li Was ist Ubiquitous Computing?
-	\li Was ist RFID? Wie funktioniert es? Welche Elemente benötigt ein RFID System?
-	\li Was ist der Unterschied zwischen aktiven und passiven RFID Chips?
-	\li Welche Zusätzlichen Funktionen können aktive RFID Chips?
-	%\li Abb: \ref{RFIDChain}: Erklären Sie die Grafik:
-	%	\begin{figure}[H]
-	%		\centering
-	%		\includegraphics[width=0.75\textwidth]{img/V13.2.jpg}
-	%		\caption{Liederkette mit RFID}
-	%		\label{RFIDChain}
-	%	\end{figure}
-	\li Wo könnte RFID im Verkehr eingesetzt werden?
-	\li Welche Datenschutzrechtlichen Bedenken gibt es gegen RFID?
-	\li Was ist das 'Erasen' von RFID Chips?
-	\li Welche Vorteile bietet ein Zentrales RFID System (Bsp. Spital)?
-	\li Welche Vorteile bietet ein dezentrales RFID System (Bsp. Verkehr)?
+	\li Was ist der Unterschied zwischen einer 'Stored Procedure' und einer Funktion?
+	\li Wie ist eine Funktion aufgebaut, wie eine Stored Procedure? Wie führen Sie den Code jeweils aus (Einbetten in anderen Code?)?
+	\li Wie funktioniert in PL/SQL das Exception Handling? Was sind unbenannte/benannte Benutzerexceptions, was benannte Systemexceptions?
+	\li Für welche drei Anwendungszwecke setzen Sie 'Stored Procedures' ein?
+	\li Welchen Vorteil bieten Stored Procedures in Zusammenhang mit Views?
+	\li Wozu dient die Pseudotabelle 'DUAL'?
 \olS
 
 
