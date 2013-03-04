@@ -99,6 +99,7 @@ urlcolor=black
 \tableofcontents
 \clearpage
 
+
 \ch{Repetition Dbs1}
 \ol
 	\li Erklären Sie das ANSI 3-Ebenen Modell
@@ -106,6 +107,7 @@ urlcolor=black
 	\li Nennen Sie die vier ACID Kriterien. Wozu werden Sie verwendet?
 	\li Lesen Sie mit einer group by Anfrage aus einer Liste mit Absolventen die Studiengangsnotendurchschnitte heraus.
 \olS
+
 
 \ch{Oracle PL/SQL}
 \olR
@@ -117,6 +119,7 @@ urlcolor=black
 	\li Wozu dient die Pseudotabelle 'DUAL'?
 \olS
 
+
 \ch{Stored Procedures}
 \olR
 	\li Erklären SIe den Unterschied zwischen einem anonymen PL/SQL Block und einer Stored Procedure. Nennen Sie je Vor- und Nachteile.
@@ -126,12 +129,14 @@ urlcolor=black
 	\li Machen Sie ein Beispiel, wie sie Stored Procedures mit Python verwenden.
 \olS
 
+
 \ch{Packages}
 \olR
 	\li Was sind PL/SQL Packages, wozu können Sie eingesetzt werden?
 	\li Warum besitzt ein DBS keine gewöhliche Input/Output Shell? Wie können Sie trotzdem Angaben von einer Kommandozeile einlesen und ausgeben?
 	\li Machen Sie eine Beispiel für ein Package
 \olS
+
 
 \ch{Cursors}
 \olR
@@ -140,5 +145,52 @@ urlcolor=black
 	Übergeben Sie x als Parameter, sodass der Cursor von aussen gesteuert werden kann.
 	\li Was können Sie mit den vier Curso-Attributen machen?
 \olS
+
+
+\ch{Constraints}
+\olR
+	\li Was sind Constraints? Was können Sie damit machen?
+	\li Was sind primäre und sekundäre Constraints, was starke und schwache Constraints?
+	\li Auf welchen Objekten können Constraints definiert werden?
+	\li Machen Sie je Beispiele:
+		\ul
+			\li Constraint anlegen
+			\li Constraint löschen
+			\li Aktivieren / Deaktivieren von Constraints
+			\li Auflisten von Constraints
+		\ulE
+\olS
+
+
+\ch{Triggers}
+\se{Triggers}
+\olR
+	\li Wozu dienen Triggers? Nennen SIe vier Hauptanwendungen.
+	\li Welche Ereignisse können einen Trigger auslösen?
+	\li Was sind Before-Triggers, was After-Triggers? Was sind Row-Triggers, was Statementtriggers?
+	\li Wozu dienen ':old' und ':new'?
+	\li Mit welchen Rechten werden Triggers ausgeführt?
+	\li Machen Sie ein Beispiel, wie mit Triggers die Daten überprüft werden können vor dem Einfügen.
+	\li Machen Sie ein Beispiel für einen Insert Trigger, der abgeleitete Attribute berechnet.
+	\li Erklären Sie, in welcher Reihenfolge und wann Triggers wie abgearbeitet werden.
+	\li Was sind instead-of Triggers? Was logon-/logoff Triggers?
+\olS
+
+\se{Updateable Views}
+\olR
+	\li Wo liegt der Unterschied zwischen temporären Tabellen und Views?
+	\li Warum können Views keine zusätzlichen Indexes erhalten?
+	\li Was sind updateable Views? Warum können Views per Default nicht/nur mit sehr starken Einschränkungen updaten?
+	\li Wie realisieren Sie updateable Views?
+\olS
+
+\se{Materialized Views}
+\olR
+	\li Was sind materialized Views?
+	\li Was ist eine virtuelle Tabelle?
+\olS
+
+
+
 
 \end{document}

@@ -338,4 +338,85 @@ Cursor muss für Update ``angekündigt'' werden.
 \sse{Cursor Attribute}
 \img{img/v2.7.jpg}{}{0.75}{}
 
+
+\ch{Constraints}
+\definition{Constraint}{Konsistenzbedinung, Regel der die Daten immer genügen müssen}
+\expl{Implizite Constraints}{Werden durch das Schema abgedeckt, z.B. Schlüssel, Wertebereiche, Kardinalität, ...}
+\expl{Primäre/Sekundäre Constraint}{Primäre ist sofort geprüft/gültig: z.B. Wertebereich, Sekundäre wird erst später geprüft: z.B. Summe von Salären, die nach dem Einfügen einer neuen Zeile erst berechnet und in Tabelle abgelegt werden muss.}
+\expl{starke/schwache Constraints}{Während (stark) oder nach der Transaktion (schwach) geprüft}
+
+\sse{Postgresql}
+\img{img/v3.1.jpg}{Add Constraint}{0.75}{}
+\img{img/v3.2.jpg}{Delete Constraint}{0.75}{}
+\img{img/v3.3.jpg}{Enable/Disable Constraint}{0.75}{}
+\img{img/v3.4.jpg}{View Constraints}{0.75}{}
+
+
+\ch{Triggers}
+\ul
+	\li Sicherstellung komplexer Konsistenzbedingungen
+	\li Werte von abgeleiteten Attributen berechnen
+	\li Speichern von materialisierten Views
+	\li Zugriffsschutz
+	\li Kann nicht direkt aufgerufen werden, gehört immer zu einer Tabelle
+	\li Wird automatisch beim Eintreten des Trigger-Events aufgerufen
+\ulE
+
+\definition{Before-Trigger}{Überprüft Vorbedinungen}
+\definition{After-Trigger}{Prüft Nachbedingungen}
+\definition{Row-Trigger}{Wird für jede betroffene Zeile aufgerufen}
+\definition{Statement-Trigger}{Wird pro SQL-Anweisung/Ereignis aufgerufen}
+
+\sse{Beispiel INSERT mit Bedingung}
+\img{img/v3.6.jpg}{}{0.5}{}
+\img{img/v3.5.jpg}{}{0.75}{}
+
+\sse{:old, :new}
+\ul
+	\li bei INSERT gibt es nur :new.{object}
+	\li beim DELETE gibt es nur :old.{object}
+	\li bei UPDATE sind beide vorhanden
+	\li referenzieren die neuen und die Alten Daten bei einer Datenbankänderung
+\ulE
+\important{Es gibt keinen SELECT Trigger!}
+
+\sse{Ereignisabfrage}
+\begin{verbatim}
+...
+IF DELETING
+...
+IF UPDATING
+...
+ELSE
+...
+END IF
+...
+\end{verbatim}
+
+\sse{Ausführungsreihenfolge}
+\img{img/v3.7.jpg}{}{0.75}{}
+
+\sse{Login/Logoff Trigger}
+Hat Zugriff auf userid und username, wird beim erfolgreichen an-/abmelden ausgelöst.
+
+\sse{Instead-of-Trigger}
+\ul
+	\li Ersetzt INSERT / UPDATE / DELETE
+	\li Materialisierte Views
+	\li Daten statt löschen nur als gelöscht markieren
+	\li Das eigentliche Originalstatement wird NICHT mehr ausgeführt
+\ulE
+\img{img/v3.8.jpg}{Beispiel View}{0.75}{}
+\img{img/v3.9.jpg}{Beispiel View}{0.75}{}
+\img{img/v3.10.jpg}{Instead-of-Trigger zur View}{0.75}{}
+
+
+\se{Updatable Views / Materialized Views}
+\expl{Unterschied View / Temporäre Tabelle}{Temoräre Tabelle lebt nur während Transaktion oder Session, Aktualität der temp. Table unbekannt. Biew ist immer aktuell.}
+\expl{Warum kann man keinen Index auf eine View anlegen?}{Tabellendaten bringen bereits einen Index mit \ra macht keinen Sinn}
+\definition{Materialisierte View}{Zwischengespeicherte View, wird nicht automatisch upgedatet}
+\expl{Virtuelle Tabelle}{Foreign Data Wrappers. Bei SQLIte: Schnittstelle zu externem Storage, z.B: csv}
+
+
+
 \end{document}
