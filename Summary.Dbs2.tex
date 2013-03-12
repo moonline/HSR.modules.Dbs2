@@ -417,6 +417,124 @@ Hat Zugriff auf userid und username, wird beim erfolgreichen an-/abmelden ausgel
 \definition{Materialisierte View}{Zwischengespeicherte View, wird nicht automatisch upgedatet}
 \expl{Virtuelle Tabelle}{Foreign Data Wrappers. Bei SQLIte: Schnittstelle zu externem Storage, z.B: csv}
 
+\exam{\\
+	\examp{For each Rows}{Tabelle A mit 10 Tuppel, Hälfte von Änderung betroffen, Für wie viele Rows wird der Trigger ausgelöst? \ra 5 Mal}
+
+	\expl{Trigger \& Locking}{Oracle lockt während dem Trigger die entsprechende Tabelle \ra Select Statement während Trigger nicht möglich}
+
+	\expl{Trigger \& Transaktionen}{Ein Trigger läuft als Transaktion, kann in einem Trigger eine weitere Transaktion geöffnet werden? Nein.}
+	
+	\expl{Triggerreihenfolge}{Implementationsspezifisch}
+}
+
+
+\ch{Spezielle Datenstrukturen}
+\se{Arrays}
+\ul
+	\li Alle Elemente besitzen den gleichen Datenty
+	\li 
+\ulE
+\sse{create}
+\begin{verbatim}
+CREATE TABLE sal_emp (
+   name text,
+   pay_by_quarter integer[],
+   schedule text[][]
+);
+\end{verbatim}
+\sse{insert}
+\begin{verbatim}
+INSERT INTO sal_emp VALUES (
+   'Bill',
+   ARRAY[10000, 10000, 10000, 10000],
+   ARRAY[['meeting', 'lunch'], ['training','presentation']]
+);
+\end{verbatim}
+
+\sse{select}
+\begin{verbatim}
+SELECT ARRAY[1,2,3+4];
+// returns: {1,2,7}
+
+SELECT ARRAY( SELECT 1 + (random()*5)::int
+FROM generate_series(1,6) ORDER BY 1 );
+// returns e.g. : {1,2,3,4,5,5}
+\end{verbatim}
+
+\sse{subscription, slice}
+\begin{verbatim}
+SELECT schedule[1:2][1:1]
+FROM sal_emp WHERE name = 'Bill';
+//returns: {{meeting},{training}}
+
+SELECT * FROM sal_emp
+WHERE 10000 = ANY (pay_by_quarter);
+// any prüft jedes Array Element, ob 10000 enthalten ist
+\end{verbatim}
+
+\sse{Array Operatoren}
+\begin{verbatim}
+// containing (array ist untermenge):
+SELECT ARRAY[2,7] <@ ARRAY[1,7,4,2,6]; // return true
+
+gleichheit & casting: 
+SELECT ARRAY[1.1,2.1,3.1]::int[] = ARRAY[1,2,3]; // return true
+
+// gemeinsames Element:
+SELECT ARRAY[1,4,3] && ARRAY[2,1]; // return true
+\end{verbatim}
+
+\exam{Operationen nicht lesen aber schreiben können}
+
+\ul
+	\li Arrays lassen sich mit negativen Indexes anlegen (z.B: von -5 bis +5)
+	\li Conversions, z.B. array to text (string\_(agg), array to rows
+	\li Es ist nur möglich an den Enden des Arrays anzufügen! Kein Einfügen an Stelle 7, wenn es keine 6 gibt
+	\li Array Update Varianten: Hinten anhängen / best. Wert ersetzen, mit Slice ganze Bereiche ersetzen, Array komplett ersetzen
+	\li Vorsicht mit Nullelementen in Arrays
+	\li Mit Bytearray können eigenen Datenstrukturen gebaut werden \ra eigener Konstruktor und eigene Lesefunktion erforderlich
+	\li Zwei Konstruktoren: '{1,2,3,4}' oder ARRAY[1,2,3,4]
+	\li Arrays dürfen mehrdimensional sein (integer[] darf weiteres integer[] array enthalten)
+\ulE
+
+\exam{Typische Prüfungsfrage: Resultatset von Subscript Query angeben \\
+SELECT id, arr[4:6] FROM table; // liefert Element 4,5 und 6 von den Arrays, die eines besitzen, ansonsten werden nur die vorhandenen Elementen oder einen leere Menge geliefert.}
+
+\se{Graphen}
+\definition{Graph}{Knoten (Nodes/Vertices V, verbunden mit Kanten (Edges E). Graphen können gerichtet sein, Zyklen oder Pfade enthalten}
+
+\examp{G = (V,E)}{\\ V = {A, B, C, D, E, F}\\
+ E = {(A, B), (A, C), (A, D), (C,D), (C, E), (D, E), (E, F)}
+ \img{img/v4.1.jpg}{}{0.25}{}
+}
+
+\se{Dictionaries}
+\definition{Dictionaries}{Key-Value Pairs KVP}
+\ul
+	\li Postgres: hstore ( 'a=>1, a=>2'::hstore )
+	\li Hstore wird als String abgelegt
+	\li hstore to array liefert {a,1,b,2}
+\ulE
+
+\begin{verbatim}
+// List all keys
+SELECT akeys(mykvpfield) FROM ...
+
+// Get all key-value pairs
+SELECT each(mykvpfield) FROM ...
+
+// Get key value
+SELECT mykvpfield->'name' FROM ...
+
+// Test if key exists :
+... WHERE mykvpfield ? '<value>';
+
+// Abfragen
+WHERE tags @> hstore('tourism', 'zoo')
+\end{verbatim}
+
+
+
 
 
 \end{document}
