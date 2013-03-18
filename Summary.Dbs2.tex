@@ -533,8 +533,95 @@ SELECT mykvpfield->'name' FROM ...
 WHERE tags @> hstore('tourism', 'zoo')
 \end{verbatim}
 
+\se{Trees}
+\definition{Trees}{ sind Specialformen von Graphen. Häufigstes Nutzungsverhalten: Write once, Read any times.}
+\examp{Trees}{Kataloge, Stücklisten, Tags, DMOZ, Bibliothek}
 
+\sse{Traversierungen}
+\ul
+	\li Pre-order: Elternelement vor Kindelement besuchen
+	\li In-order: Elternelement zwischen Kindelementen besuchen
+	\li Post-Order: Elternelement nach Kindern besuchen
+	\li Depth-First: Zweig für Zweig bis ganz nach unten besuchen
+	\li Breigth-First: Ebene für Ebene besuchen
+\ulE
 
+\sse{Adjazenzliste}
+\examp{}{Tabelle mit CTE}
+\ul
+	\li Columns: ID, ParentID
+	\li Schnelle crud-ops
+	\li Level und Pfad bestimmen aufwendig
+	\li CTE zum Traversieren notwendig
+\ulE
+\sss{CTE}
+\begin{verbatim}
+id,desc, parent
+---------------
+2,'Computing', NULL
+3, 'Programming', 2
+4, 'C++', 3
+5, 'Java', 3
+6, Design', 2
+\end{verbatim}
+
+\sss{tree}
+\begin{verbatim}
+2. Computing
+    3. Programming
+        4. C++
+        5. Java
+    6. Design
+\end{verbatim}
+
+\sse{Nested Set Modell}
+\examp{Nested Set Modell}{Tabelle der XML}
+\definition{Nested Set Model}{Ähnlich wie Preorder Tree Traversal}
+\examp{}{Nested Set Modell ist normale Baumstruktur, enthält allerdings als Knoteneigenschaften den kleinsten und höchsten direkten Nachfolger (left, right) als Wert. }
+\ul
+	\li columns: Left, Right
+	\li Einfügen: sehr Aufwendig, weil Knoten umsortiert werden müssen und left/right angepasst werden müssen
+\ulE
+\img{img/v5.1.jpg}{}{0.75}{}
+\sss{SQL}
+\begin{verbatim}
+-- fields:              node, name, left, right, parent
+-------------------------------------------------------
+insert into skills values (2, 'Computing', 2, 29, NULL);
+insert into skills values (3, 'Programming', 3, 10, 2);
+insert into skills values (4, 'C++', 4, 5, 3);
+\end{verbatim}
+
+\sse{Materialisierter Pfad}
+\examp{Materialisierter Pfad}{Ltree Datentyp, Modul}
+\ul
+	\li Hirarchische Struktur von Bezeichnungen/Zahlen
+	\li Seppariert mit Punkt: Top.Countries.Europe.Switzerland
+	\li ltree ist eine Postgres Erweiterung
+\ulE
+\begin{verbatim}
+CREATE TABLE skills (id INTEGER, oth ltree);
+\end{verbatim}
+
+\sss{Abfragebeispiele}
+\begin{verbatim}
+SELECT 'Welt.Europa.Schweiz.SG.Rapperswil.HSR'::ltree <@ 'Welt.Europa.Schweiz::ltree
+// liefert true, weil HSR ein Nachfolger von Welt.Europa.Schweiz ist
+
+// nächster gemeinsamer Vorgänger:
+SELECT lca('Welt.Europa.Schweiz.SG.Rapperswil_Jona'::ltree, 'Welt.Europa.Schweiz.Zürich.Zürich'::ltree)
+// liefert 'Welt.Europa.Schweiz'
+
+// Alle Knoten, die 'School' heissen, egal wo in der Struktur
+SELECT ... WHERE path ~ '*.School.*';
+\end{verbatim}
+
+\sse{XML}
+\ul
+	\li XPATH (Postgres)
+	\li XML export: 
+		\begin{verbatim}SELECT query_to_xml('SELECT * FROM mytable',TRUE,FALSE,''); \end{verbatim}
+\ulE
 
 
 \end{document}
