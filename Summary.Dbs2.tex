@@ -832,6 +832,325 @@ CREATE TYPE TelNummerTabTyp AS TABLE OF TelNummerTyp;
 \exam{Index by Table: Nur wissen, dass es sowas gibt}
 
 
+\ch{ODBMS}
+\uli{
+	\li Objekte sollen bis zu beliebigen Tiefen persistiert werden können, ohne irgend ein Mapping
+	\li oo Datenbanken sind sehr eng an die jeweilige Sprache angebunden
+	\li 2-Tier Architekturen:
+		\uli{
+			\li Fat Client
+				\uli{
+					\li Applikationscode
+					\li DB Code (Persistenzimplementation, Queries)
+				}
+			\li DB Server
+				\uli{
+					\li Datenspeicherung
+					\li Locking
+				}
+		}
+}
+\sse{ODBS Anforderungen}
+\img{img/v7.1.jpg}{}{0.75}{}
+
+\sse{Warum keine Speicherung durch Serialisierung?}
+\uli{
+	\li Unvollständig
+		\uli{
+			\li Klassendefinition wird nicht mitgespeichert
+			\li Probleme mit Versionierung / Schema Evolution
+		}
+		\li Nicht orthogonal (Serialisierbare Klassen müssen interface implementieren)
+		\li Nicht persistent (Object identity geht verloren)
+		\li Nicht skalierbar (Objekt-Graphen als Ganzes (de-)serialisiert)
+		\li Keine Transaktionen
+		\li Weder wiederherstellbar noch ‘concurrent’
+}
+
+\se{Persistenzstrategien}
+\sse{Persistence by Reachability}
+\uli{
+	\li Geht davon aus, dass es ein Wurzel Objekt gibt, von dem aus persistiert werden kann
+	\li Es werden nur von dort aus erreichbare Objekte persistiert
+}
+\img{img/v7.2.jpg}{}{0.25}{}
+
+\sse{Persistenzserver}
+\definition{Page Server}{Versteht nichts von Objekten, liefert einfach Pages an den Client aus}
+\img{img/v7.3.jpg}{}{0.75}{}
+\definition{Object Server}{Versteht Objekt und liefert anhand von Parametern Objekt an den Client zurück}
+\img{img/v7.4.jpg}{}{0.75}{}
+
+\sse{OID}
+\uli{
+	\li oo DB's ersetzen OID Referenzen mit in-Memory Referenzen\\
+		\ra viell effizienter\\
+		\ra Pointer Swizzling
+	\li Logische OID: dem Programmierer bekannte OID, muss auf Memory-Referenz übersetzt werden
+	\li Physische OID: Memory Adresse \ra keine Übersetzung
+}
+\img{img/v7.5.jpg}{Pointer Swizzling}{0.75}{}
+\expl{Objekterhaltende Abfrage}{Objekte werden nicht verändern}
+\expl{Nicht Objekterhaltdende Abfrage}{z.B. Join. Aus bestehenden Daten werden neue Objekte generiert}
+\expl{Objekterzeugende Anfrage}{Neue Obekte müssen zur Laufzeit aus bestehenden erzeugt werden}
+
+\se{ODMG Standard}
+\uli{
+	\li Attribute und Beziehungen wie bei oo Sprachen
+	\li Mehrfachvererbung bei Schnittstellen und EInfachvererbung bei Klassen
+	\li Objekte besitzen einen lebenslangen OID
+	\li Persistence by Reachability
+	\li ACID genügende Transaktionen
+	\li Lockprotokolle
+}
+
+\sse{ODL Object definition Language}
+\img{img/v7.6.jpg}{1:1 Relation}{0.75}{}
+\img{img/v7.7.jpg}{}{0.75}{}
+\img{img/v7.8.jpg}{1:N Relation}{0.75}{}
+\img{img/v7.9.jpg}{N:M Relation}{0.75}{}
+\img{img/v7.10.jpg}{Rekursiv N:M}{0.75}{}
+\img{img/v7.11.jpg}{Extent hat nichst mit 'extends' zu tun. extent bezeichnet die Wurzel!}{0.75}{}
+\img{img/v7.12.jpg}{ANgPro Beispiel ODL}{0.75}{}
+
+\sse{OQL Objective Query Language}
+\uli{
+	\li Deskriptive Abfragespraches
+	\li 
+}
+\img{img/v7.13.jpg}{Pfadorientierte Beispielabfrage mit OQL}{0.75}{}
+
+\se{db4o}
+\img{img/v7.14.jpg}{db4o Architektur}{1}{}
+\img{img/v7.15.jpg}{db4o Modi}{0.75}{}
+
+
+\ch{NoSQL}
+\sse{Eigenschaften}
+\expl{RDBMS Nachteile}{besitzen ``Single Point of Failure'' und kennen nur ``Scaling out'', kein ``Scaling up''}
+\uli{
+	\li Nicht relational
+	\li Schemalos
+	\li Consistency keine Bedingung mehr (eventually consistent \ra BASE)
+	\li Hochverfügbarkeit
+	\li verteilte Datenbanken, verteilte Schreibzugriffe (läuft oft auf Clusters)
+	\li grosse Datenmengen
+	\li Open Source
+	\li Produkt des 21. Jhd
+	\li Einfache Datenreplikation
+	\li Keine genormte Abfragesprache, JSON jedoch weit verbreitet
+}
+
+\sse{NoSQL Kategorien}
+\uli{
+	\li Key/Value-Datenmodelle bzw. -Datenbanken
+		\uli{
+			\li Value ist opak für DB (unsichtbar)
+			\li Besitzen Meta-Daten
+			\li bsp. hStore
+		}
+	\li Dokument-Datenmodelle bzw. -Datenbanken \ra geschachtelte Strukturen, typischerweise JSON
+		\uli {
+			\li Values sind strukturiert und dokumentiert im Unterschied zu Key-/Value DB
+		}
+	\li Column-Family Stores \ra Columnen zusammenfassen zu Supercolumnen
+		\img{img/v8.1.jpg}{Column Family}{0.75}{}
+	\li Graph-Datenbanken
+		\uli{
+			\li optimiert für Objekte mit Beziehungen
+		}
+	\li Andere: Objektdatenbanken und XML-Datenbanken
+}
+
+\expl{Schemalose DB}{
+	\uli{
+		\li nichtuniforme Daten \ra\ Bsp. Openstreetmap kennt keine Festlegung auf Strassen, Gebäude, etc.
+		\li implizite Schemen \ra\ Schema und Konsistenz-Infos innerhalb der Applikation
+	}
+}
+
+\se{Aggregations Datenmodelle}
+z.B:
+\uli{
+	\li Arrays
+	\li Dictionaries
+	\li geschachtelte Strukturen
+}
+
+\exam{Was passiert bei einer geclusterten DB mit der Performance, wenn ein weiterer Node hinzugefügt wird? \\ Zuerst geht sie runter, bis die reorganisation abgeschlossen ist, anschliessend wieder hoch.}
+
+
+\se{Verteilte Datenbank-Modelle}
+\sse{Arten des Verteilens}
+\uli{
+	\li sharding
+	\li Replikation
+}
+\expl{sharding}{horizontales Partitionieren \ra\ z.B. Kunden a-c in einen Node ablegen, c-e in einen andern, ...}
+\expl{Replikation}{
+	\uli{
+		\li Master-Slave: Schreib-ops nur auf Master, leseoperationen auf Replikate (Slaves)
+		\li Master-Master: (P2P), schreiben auf alle Knoten
+	}
+} 
+
+
+\se{Konsistenz}
+\expl{CAP}{Es können nur zwei Bedingungen garantiert werden, auf die dritte muss verzichtet werden \\ \ra\ bsp. relationale Datenbanken: auf Availability muss verzichtet werden während Index oder Sorting neu gebildet werden muss. \\
+\ra\ Twitter: Au Consistency wird verzichtet. Wenn ein Tweet gelöscht wird, so geht es noch einige Zeit, bis er auf allen Knoten gelöscht ist.}
+\img{img/v8.2.jpg}{CAP}{0.5}{}
+\img{img/v8.3.jpg}{Bei NoSQL DB's ist nur ``Inkonsistenz'' und kein ``Fail'' erwünscht}{0.75}{}
+
+
+\sse{BASE}
+\uli{
+	\li \textbf{B}asically \textbf{A}vailable: permanent availablity
+ 	\li \textbf{S}oft State: consistency is no solid state
+	\li \textbf{E}ventual Consistency: data is consistent sometime
+}
+
+\expl{CAP und BASE}{sind schlecht definierbar/abgrenzbar\\
+\ra\ Konsistenz kann (in verteilten DBs) durch mehr Knoten erhöht werden – zum Preis einer erhöhten Latenz\\
+\ra\ Durability kann z.T. zugunsten der Performance geopfert werden\\
+\ra\ Quorum: Mindestanzahl von Knoten, die Ack senden muss, damit das System als konsistenz gilt }
+
+
+\se{Map Reduce}
+\img{img/v8.4.jpg}{\textbf{Map} Reduce Beispiel anhand einer Shopping Card Statistik}{0.75}{}
+\img{img/v8.5.jpg}{Map \textbf{Reduce} Beispiel anhand einer Shopping Card Statistik}{0.75}{}
+\uli{
+	\li Eigent sich gut zur Berechung von Aggregationsfunktionen
+	\li Funktion:
+		\oli{
+			\li orderItems werden zerlegt in einzelne Key/Value Paare
+			\li Output von Map wird mit anderen Outputs zusammengeführt
+			\li Endresultat wird berechnet
+		}	
+}
+
+\expl{Materialized View}{Gespeichertes Map Reduce, inkrementell aktualisiert}
+
+
+\ch{Backup \& Recovery}
+\expl{Transaktionen Backup}{Write ahead Log. Relationale Datenbanken schreiben die SQL Statements (insert, delete \ra nur Ändernde Opertionen) ins Log, bevor die Operationen ausgeführt werden}
+
+\sse{Backup Alternativen?}
+\uli{
+	\li Replizieren
+		\uli{
+			\li Irgendwann wird trotzdem ein Backup gebraucht, um einen bestimmten Zustand wiederherzustellen
+			\li Dump kein Problem, weil in dieser Zeit die Andern Nodes daten liefern können
+		}
+	\li geclustert
+		\uli{
+			\li Zentrales Backup trotzdem notwendig
+		}
+	\li cloud
+		\uli{
+			\li Lokales Backup bevorzugt
+		}
+	\li SAN Storage Area Network
+		\uli{
+			\li Backup unumgänglich für Speicherung auf einem langfristigen Backupmedium
+		}
+}
+
+
+\se{Backup Architektur}
+\stdImg{v9.1}{Beteiligte Systemkomponenten}
+\uli{
+	\li Log sollte physisch auf anderer Maschine als DB untergebracht sein
+	\li Wird das Memory knapp, werden noch nicht commitete Daten in die DB ausgelagert \ra heikel wegen Wiederherstellung nach Absturz
+}
+
+
+\se{Recovery}
+\sse{Lokale Fehler einer Transaktion}
+\uli{
+	\li Führt zu Deadlocks
+	\li wird mit Rollback oder lokale undo behoben
+}
+
+\sse{Hauptspeicherverlust}
+\uli{
+	\li Stromausfall
+	\li Inkonsistenz von Daten die noch nicht auf Disk geschrieben wurden
+	\li wird mit globalem Undo behoben
+	\li Undo: alle aktiven Transaktionen werden zurückgesetzt
+	\li Redo: abgeschlossenen Trasaktionen werden wiederholt
+}
+
+\sse{Fehler mit Hintergrundspeicher}
+\uli{
+	\li Hardwarefehler, Disk crash
+	\li Auf Disk gespeicherte Daten unbrauchbar
+	\li Komplettes Backup neu einspielen
+	\li Mit Hilfe von Log Files werden die Daten bis zum letzten konsistenten Zustand wiederholt
+}
+
+\expl{WAL}{Write Ahead Log: Vor den Op's werden alle Op's als Log EInträge festgehalten für Undo}
+\expl{Checkpoint}{Blockt neue Transaktionen, bis alte abgeschlossen wird. Checkpoint ist somit Konsistenter Zustand. \ra\ zu viele Checkpoints bremsen DB aus.}
+\stdImg{v9.2}{Überlappende Transaktionen sind verloren bei Absturz}
+\stdImg{v9.3}{Checkpoint blockt T3 bis T2 abgeschlossen. Damit ist nach Absturz nur T3 und T4 verloren. Es kann versucht werden, T3 mittels der Logs wiederherzustellen.}
+\expl{Checkpoint und Savepoint}{Savepoint ist Rücksprungpunkt innerhalb Transaktion, Checkpoint ist globalen Konsistenzpunkt}
+
+
+\se{Backup}
+\stdImg{v9.4}{}
+\uli{
+	\li Variante 1:
+		\uli{
+			\li Keine Transaktionen auf DB während Sicherung aktiv =
+Offline-Backup (consistent backup)
+			\li Vorteil: DB-Kopie ist in transaktionskonsistentem Zustand!
+			\li Nachteil: während Sicherung darf keine (Schreib-
+)Transaktion auf DB aktiv sein! (vielfach nicht akzeptabel,
+z.B. 24h Betrieb)
+}
+	\li Variante 2:
+		\uli{
+			\li Transaktionen können auf DB während der Sicherung
+aktiv sein = Online-Backup (inconsistent backup)
+			\li Vorteil: DB-Betrieb nicht (oder kaum) beeinträchtigt
+			\li Nachteil: DB-Kopie nicht in transaktionskonsistentem
+Zustand
+			\li Wiederherstellung (Recovery) aufwändiger
+		}
+
+}
+
+
+\definition{PITR}{Point in Time Recovery:  Wiederherstellung der DB bis zu einem definierten
+	Zeitpunkt vor dem Fehler („Simulation“ eines
+	Systemfehlers zu diesem Zeitpunkt) = PITR \\
+	\ra\ Besser als Full Backup + Inkrementelles Backup
+}
+
+\sse{Backup Planung}
+\uli{
+	\li Was soll gesichert werden? Sys-DB+User-DB
+	\li Wie lange zurück archivieren?
+	\li Maximale Ausfallzeit, d.h. Zeit für Recovery? Anzahl und Grösse der Änderungen sowie Zeitintervall
+	\li Wie soll gesichert werden
+	\li Recovery Tests	
+}
+
+
+\expl{Stammdaten}{Daten, die nicht mehr verändert werden.}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
