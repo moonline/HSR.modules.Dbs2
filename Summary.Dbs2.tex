@@ -995,154 +995,414 @@ z.B:
 } 
 
 
-\se{Konsistenz}
-\expl{CAP}{Es können nur zwei Bedingungen garantiert werden, auf die dritte muss verzichtet werden \\ \ra\ bsp. relationale Datenbanken: auf Availability muss verzichtet werden während Index oder Sorting neu gebildet werden muss. \\
-\ra\ Twitter: Au Consistency wird verzichtet. Wenn ein Tweet gelöscht wird, so geht es noch einige Zeit, bis er auf allen Knoten gelöscht ist.}
-\img{img/v8.2.jpg}{CAP}{0.5}{}
-\img{img/v8.3.jpg}{Bei NoSQL DB's ist nur ``Inkonsistenz'' und kein ``Fail'' erwünscht}{0.75}{}
+	\se{Konsistenz}
+		\expl{CAP}{Es können nur zwei Bedingungen garantiert werden, auf die dritte muss verzichtet werden \\ \ra\ bsp. relationale Datenbanken: auf Availability muss verzichtet werden während Index oder Sorting neu gebildet werden muss. \\
+		\ra\ Twitter: Au Consistency wird verzichtet. Wenn ein Tweet gelöscht wird, so geht es noch einige Zeit, bis er auf allen Knoten gelöscht ist.}
+		\img{img/v8.2.jpg}{CAP}{0.5}{}
+		\img{img/v8.3.jpg}{Bei NoSQL DB's ist nur ``Inkonsistenz'' und kein ``Fail'' erwünscht}{0.75}{}
 
 
-\sse{BASE}
-\uli{
-	\li \textbf{B}asically \textbf{A}vailable: permanent availablity
- 	\li \textbf{S}oft State: consistency is no solid state
-	\li \textbf{E}ventual Consistency: data is consistent sometime
-}
+		\sse{BASE}
+			\uli{
+				\li \textbf{B}asically \textbf{A}vailable: permanent availablity
+			 	\li \textbf{S}oft State: consistency is no solid state
+				\li \textbf{E}ventual Consistency: data is consistent sometime
+			}
 
-\expl{CAP und BASE}{sind schlecht definierbar/abgrenzbar\\
-\ra\ Konsistenz kann (in verteilten DBs) durch mehr Knoten erhöht werden – zum Preis einer erhöhten Latenz\\
-\ra\ Durability kann z.T. zugunsten der Performance geopfert werden\\
-\ra\ Quorum: Mindestanzahl von Knoten, die Ack senden muss, damit das System als konsistenz gilt }
+			\expl{CAP und BASE}{sind schlecht definierbar/abgrenzbar\\
+			\ra\ Konsistenz kann (in verteilten DBs) durch mehr Knoten erhöht werden – zum Preis einer erhöhten Latenz\\
+			\ra\ Durability kann z.T. zugunsten der Performance geopfert werden\\
+			\ra\ Quorum: Mindestanzahl von Knoten, die Ack senden muss, damit das System als konsistenz gilt }
 
 
-\se{Map Reduce}
-\img{img/v8.4.jpg}{\textbf{Map} Reduce Beispiel anhand einer Shopping Card Statistik}{0.75}{}
-\img{img/v8.5.jpg}{Map \textbf{Reduce} Beispiel anhand einer Shopping Card Statistik}{0.75}{}
-\uli{
-	\li Eigent sich gut zur Berechung von Aggregationsfunktionen
-	\li Funktion:
+	\se{Map Reduce}
+		\img{img/v8.4.jpg}{\textbf{Map} Reduce Beispiel anhand einer Shopping Card Statistik}{0.75}{}
+		\img{img/v8.5.jpg}{Map \textbf{Reduce} Beispiel anhand einer Shopping Card Statistik}{0.75}{}
+		\uli{
+			\li Eigent sich gut zur Berechung von Aggregationsfunktionen
+			\li Funktion:
+				\oli{
+					\li orderItems werden zerlegt in einzelne Key/Value Paare
+					\li Output von Map wird mit anderen Outputs zusammengeführt
+					\li Endresultat wird berechnet
+				}	
+		}
+
+		\expl{Materialized View}{Gespeichertes Map Reduce, inkrementell aktualisiert}
+
+
+	\ch{Backup \& Recovery}
+		\expl{Transaktionen Backup}{Write ahead Log. Relationale Datenbanken schreiben die SQL Statements (insert, delete \ra nur Ändernde Opertionen) ins Log, bevor die Operationen ausgeführt werden}
+
+		\sse{Backup Alternativen?}
+			\uli{
+				\li Replizieren
+					\uli{
+						\li Irgendwann wird trotzdem ein Backup gebraucht, um einen bestimmten Zustand wiederherzustellen
+						\li Dump kein Problem, weil in dieser Zeit die Andern Nodes daten liefern können
+					}
+				\li geclustert
+					\uli{
+						\li Zentrales Backup trotzdem notwendig
+					}
+				\li cloud
+					\uli{
+						\li Lokales Backup bevorzugt
+					}
+				\li SAN Storage Area Network
+					\uli{
+						\li Backup unumgänglich für Speicherung auf einem langfristigen Backupmedium
+					}
+			}
+
+
+	\se{Backup Architektur}
+		\stdImg{v9.1}{Beteiligte Systemkomponenten}
+		\uli{
+			\li Log sollte physisch auf anderer Maschine als DB untergebracht sein
+			\li Wird das Memory knapp, werden noch nicht commitete Daten in die DB ausgelagert \ra heikel wegen Wiederherstellung nach Absturz
+		}
+
+
+	\se{Recovery}
+		\sse{Lokale Fehler einer Transaktion}
+		\uli{
+			\li Führt zu Deadlocks
+			\li wird mit Rollback oder lokale undo behoben
+		}
+
+		\sse{Hauptspeicherverlust}
+			\uli{
+				\li Stromausfall
+				\li Inkonsistenz von Daten die noch nicht auf Disk geschrieben wurden
+				\li wird mit globalem Undo behoben
+				\li Undo: alle aktiven Transaktionen werden zurückgesetzt
+				\li Redo: abgeschlossenen Trasaktionen werden wiederholt
+			}
+
+		\sse{Fehler mit Hintergrundspeicher}
+			\uli{
+				\li Hardwarefehler, Disk crash
+				\li Auf Disk gespeicherte Daten unbrauchbar
+				\li Komplettes Backup neu einspielen
+				\li Mit Hilfe von Log Files werden die Daten bis zum letzten konsistenten Zustand wiederholt
+			}
+
+		\expl{WAL}{Write Ahead Log: Vor den Op's werden alle Op's als Log EInträge festgehalten für Undo}
+		\expl{Checkpoint}{Blockt neue Transaktionen, bis alte abgeschlossen wird. Checkpoint ist somit Konsistenter Zustand. \ra\ zu viele Checkpoints bremsen DB aus.}
+		\stdImg{v9.2}{Überlappende Transaktionen sind verloren bei Absturz}
+		\stdImg{v9.3}{Checkpoint blockt T3 bis T2 abgeschlossen. Damit ist nach Absturz nur T3 und T4 verloren. Es kann versucht werden, T3 mittels der Logs wiederherzustellen.}
+		\expl{Checkpoint und Savepoint}{Savepoint ist Rücksprungpunkt innerhalb Transaktion, Checkpoint ist globalen Konsistenzpunkt}
+
+
+	\se{Backup}
+		\stdImg{v9.4}{}
+		\uli{
+			\li Variante 1:
+				\uli{
+					\li Keine Transaktionen auf DB während Sicherung aktiv =
+		Offline-Backup (consistent backup)
+					\li Vorteil: DB-Kopie ist in transaktionskonsistentem Zustand!
+					\li Nachteil: während Sicherung darf keine (Schreib-
+		)Transaktion auf DB aktiv sein! (vielfach nicht akzeptabel,
+		z.B. 24h Betrieb)
+		}
+			\li Variante 2:
+				\uli{
+					\li Transaktionen können auf DB während der Sicherung
+		aktiv sein = Online-Backup (inconsistent backup)
+					\li Vorteil: DB-Betrieb nicht (oder kaum) beeinträchtigt
+					\li Nachteil: DB-Kopie nicht in transaktionskonsistentem
+		Zustand
+					\li Wiederherstellung (Recovery) aufwändiger
+				}
+
+		}
+
+
+		\definition{PITR}{Point in Time Recovery:  Wiederherstellung der DB bis zu einem definierten
+			Zeitpunkt vor dem Fehler („Simulation“ eines
+			Systemfehlers zu diesem Zeitpunkt) = PITR \\
+			\ra\ Besser als Full Backup + Inkrementelles Backup
+		}
+
+		\sse{Backup Planung}
+			\uli{
+				\li Was soll gesichert werden? Sys-DB+User-DB
+				\li Wie lange zurück archivieren?
+				\li Maximale Ausfallzeit, d.h. Zeit für Recovery? Anzahl und Grösse der Änderungen sowie Zeitintervall
+				\li Wie soll gesichert werden
+				\li Recovery Tests	
+			}
+
+		\expl{Stammdaten}{Daten, die nicht mehr verändert werden.}
+
+
+
+\ch{Interne Ebene}
+	\se{Heap}
+		\definition{Heap}{Collection von Data Pages}
+		\uli{
+			\li Daten werden nicht sortiert gespeichert
+		}
+		\stdImg{v10.1}{Data Pages}
+		\definition{Table Scan}{Scannen aller Pages einer Tabelle}
+		
+	\se{Index}
+		\definition{Index}{Ein Index ist eine Datenstruktur für den effizienten Zugriff auf die Daten}
+		\uli{
+			\li Bei jedem Einfügen wird z.B. der PK in den Index gelegt
+			\li Index kann auch manuell für beliebige Felder erstellt werden
+			\li Indexes dienen der beschleunigung der Suche
+			\li Index bedeutet Overhead
+		}
+		\stdImg{v10.2}{}
+
+		\sse{Queries}
+			\stdImg{v10.3}{Arten von Queries}
+			\stdImg{v10.4}{Artn von Queries}
+			
+			\sss{Relevante Operationen}
+				\stdImg{v10.5}{Relevante Operationen}
+
+	\se{Indexstrukturen}
+		\sse{ISAM}
+			\expl{ISAM}{Index Sequential Access Method}
+			\uli{
+				\li einfügen und suchen schnell
+				\li aktualisieren schlecht, weil alle Files reorganisiert werden
+			}
+
+		\sse{B-Bäume}
+			\uli{
+				\li Range- und Equal Search
+				\li Balancierte Mehrweg-Bäume
+				\li  Die Knotengrösse entspricht der Seitengrösse
+				\li  Der Verzweigungsgrad des Baums hängt davon ab, wie viele Einträge auf einer Seite Platz haben
+				\li Durch entsprechende Algorithmen für das Einfügen und Löschen von
+Daten garantiert, dass der Baum immer ausbalanciert ist =>
+Logarithmische Zugriffszeiten
+				\li Der Baum wächst von unten nach oben
+				\li Ist ein Knoten voll, so wird beim Einfügen der Knoten gesplitted und das mittlere Element wandert einen Ebene nach oben
+				\li Ein Knoten muss immer mindestens zwei Elemente beinhalten
+				\li Beim Löschen wird bei zu leeren Knoten der Baum reorganisiert
+			}
+			\stdImg{v10.6}{B-Baum}
+			\stdImg{v10.7}{B-Baum}
+			\stdImg{v10.8}{B-Baum}
+
+		\sse{B+ Baum}
+			\uli{
+				\li Daten sind in den Blättern
+			}
+
+		\sse{Clustered Index}
+			\stdImg{v10.9}{clustered Index}
+			\uli{
+				\li Pro Tabelle nur ein clustered Index, weil die Tuppels sortiert werden
+			}
+			
+		\sse{Non Clustered Index}
+			\stdImg{v10.10}{non-clustered Index}
+			\stdImg{v10.11}{}
+			\uli{
+				\li Non-Clustered/Clustered Index gemixt braucht zwei Zugriffe
+				\li für jeden Zugriff muss eine Page geladen werden
+			}
+
+		\sse{Hash Index}
+			\uli{
+				\li Ordnet Keys zu Records {0,...,N-1}, konkret Schlüssel zu Blöcken zu
+				\li Probleme: Hash Überlauf \ra\ von Zeit zu Zeit Reorganisation nötig
+				\li Für Equi Join gut geeignet
+			}
+			\stdImg{v10.12}{Hash Index}
+
+		\sse{Bitmap Index}
+			\expl{Bitmap Index}{Matrix mit \#Rows*\#Otionen Felder. Für jede Kombination Feld/Option wird ein Bit 0 oder 1 gesetzt. Darum eignet sich dieser Index nur für Felder mit einer begrenzten Anzahl Optionen, z.B. Männlich/Weiblich oder Enum}
+			\uli{
+				\li Ordnet Attributwerte als Bitmuster 
+				\li Geeignet für Attribute mit wenigen diskreten Werten, d.h. Wertebereiche mit
+geringer Kardinalität (ca. 1\% der Datenmenge)
+				\li Vor allem für DataWarehouse geeignet
+			}
+			\stdImg{v10.13}{}
+
+		\sse{Mehrdimensionale, räumliche Indexe}
+			\uli{
+				\li near-queries
+				\li Räumliche Ordnungsstruktur: Was räumlich nahe beisammen ist, soll auch auf dem
+Speicher nahe beisammen liegen
+				\li Hierarchien: Anpassung an ungleich verteilte Daten. schneller Ausschluss von ganzen
+Bereichen bei der Suche
+			}
+			\stdImg{v10.14}{}
+		
+	\se{Index erstellen}
+		\stdImg{v10.15}{}
+
+		\sse{Kosten Modell}
+			\img{img/v10.16.jpg}{Definitionen}{0.5}{}
+			\img{img/v10.17.jpg}{}{0.25}{}
+
+		\sse{Kosten bei Clustered Index}
+			\stdImg{v10.18}{}
+			\stdImg{v10.19}{}
+				
+		\sse{Kosten bei unclustered Index}
+			\stdImg{v10.20}{}
+			\stdImg{v10.21}{}
+			\stdImg{v10.22}{}
+			
+		\sse{Vergleich}
+			\stdImg{v10.23}{Vergleich für grosse Tabelle}
+			\stdImg{v10.24}{Vergleich für kleine Tabelle}
+			\uli{
+				\li Index bringt nur bei grossen Tabellen etwas
+			}
+
+
+	\se{Query Processing}
+		\stdImg{v10.25}{Select}
 		\oli{
-			\li orderItems werden zerlegt in einzelne Key/Value Paare
-			\li Output von Map wird mit anderen Outputs zusammengeführt
-			\li Endresultat wird berechnet
-		}	
-}
-
-\expl{Materialized View}{Gespeichertes Map Reduce, inkrementell aktualisiert}
-
-
-\ch{Backup \& Recovery}
-\expl{Transaktionen Backup}{Write ahead Log. Relationale Datenbanken schreiben die SQL Statements (insert, delete \ra nur Ändernde Opertionen) ins Log, bevor die Operationen ausgeführt werden}
-
-\sse{Backup Alternativen?}
-\uli{
-	\li Replizieren
-		\uli{
-			\li Irgendwann wird trotzdem ein Backup gebraucht, um einen bestimmten Zustand wiederherzustellen
-			\li Dump kein Problem, weil in dieser Zeit die Andern Nodes daten liefern können
-		}
-	\li geclustert
-		\uli{
-			\li Zentrales Backup trotzdem notwendig
-		}
-	\li cloud
-		\uli{
-			\li Lokales Backup bevorzugt
-		}
-	\li SAN Storage Area Network
-		\uli{
-			\li Backup unumgänglich für Speicherung auf einem langfristigen Backupmedium
-		}
-}
-
-
-\se{Backup Architektur}
-\stdImg{v9.1}{Beteiligte Systemkomponenten}
-\uli{
-	\li Log sollte physisch auf anderer Maschine als DB untergebracht sein
-	\li Wird das Memory knapp, werden noch nicht commitete Daten in die DB ausgelagert \ra heikel wegen Wiederherstellung nach Absturz
-}
-
-
-\se{Recovery}
-\sse{Lokale Fehler einer Transaktion}
-\uli{
-	\li Führt zu Deadlocks
-	\li wird mit Rollback oder lokale undo behoben
-}
-
-\sse{Hauptspeicherverlust}
-\uli{
-	\li Stromausfall
-	\li Inkonsistenz von Daten die noch nicht auf Disk geschrieben wurden
-	\li wird mit globalem Undo behoben
-	\li Undo: alle aktiven Transaktionen werden zurückgesetzt
-	\li Redo: abgeschlossenen Trasaktionen werden wiederholt
-}
-
-\sse{Fehler mit Hintergrundspeicher}
-\uli{
-	\li Hardwarefehler, Disk crash
-	\li Auf Disk gespeicherte Daten unbrauchbar
-	\li Komplettes Backup neu einspielen
-	\li Mit Hilfe von Log Files werden die Daten bis zum letzten konsistenten Zustand wiederholt
-}
-
-\expl{WAL}{Write Ahead Log: Vor den Op's werden alle Op's als Log EInträge festgehalten für Undo}
-\expl{Checkpoint}{Blockt neue Transaktionen, bis alte abgeschlossen wird. Checkpoint ist somit Konsistenter Zustand. \ra\ zu viele Checkpoints bremsen DB aus.}
-\stdImg{v9.2}{Überlappende Transaktionen sind verloren bei Absturz}
-\stdImg{v9.3}{Checkpoint blockt T3 bis T2 abgeschlossen. Damit ist nach Absturz nur T3 und T4 verloren. Es kann versucht werden, T3 mittels der Logs wiederherzustellen.}
-\expl{Checkpoint und Savepoint}{Savepoint ist Rücksprungpunkt innerhalb Transaktion, Checkpoint ist globalen Konsistenzpunkt}
-
-
-\se{Backup}
-\stdImg{v9.4}{}
-\uli{
-	\li Variante 1:
-		\uli{
-			\li Keine Transaktionen auf DB während Sicherung aktiv =
-Offline-Backup (consistent backup)
-			\li Vorteil: DB-Kopie ist in transaktionskonsistentem Zustand!
-			\li Nachteil: während Sicherung darf keine (Schreib-
-)Transaktion auf DB aktiv sein! (vielfach nicht akzeptabel,
-z.B. 24h Betrieb)
-}
-	\li Variante 2:
-		\uli{
-			\li Transaktionen können auf DB während der Sicherung
-aktiv sein = Online-Backup (inconsistent backup)
-			\li Vorteil: DB-Betrieb nicht (oder kaum) beeinträchtigt
-			\li Nachteil: DB-Kopie nicht in transaktionskonsistentem
-Zustand
-			\li Wiederherstellung (Recovery) aufwändiger
+			\li Syntax check
+			\li Check, ob Tabellen, Felder etc. überhaupt vorhanden
+			\li Umwandlung in AST
+			\li Query wird anhand von Statistiken optimiert
+			\li Variable Binding, Code Generation
+			\li Execution
 		}
 
-}
+		\exam{Prüfungsfrage: Unterschied Range Query und Multipoint Query}
+
+		\examp{}{Geg: p = 10000 Pages, r = 20 Records / Page\\ 
+			Ges: Elemente mit dem Attributewert Rot
+			\uli{
+				\li TableScan: 200000 IOs
+				\li Mit Index: 
+					\uli{
+						\li 100 rote Elemente: 2 (Indexzugriffe)+100 = 102
+						\li 10000 rote Elemente: 2500+20000+200 = 22700
+					}
+			}
+		}
+		\important{Sollen mehr als 10\% Der Tupel gefunden werden, ist der Table Scan billiger als ein Index. Auch bei kleinen Tabellen lohnt sich ein Index nicht.}
 
 
-\definition{PITR}{Point in Time Recovery:  Wiederherstellung der DB bis zu einem definierten
-	Zeitpunkt vor dem Fehler („Simulation“ eines
-	Systemfehlers zu diesem Zeitpunkt) = PITR \\
-	\ra\ Besser als Full Backup + Inkrementelles Backup
-}
+	\se{Join}
+		\sse{Hash Join}
+			\uli{
+				\li Von jedem Rechten Hash bilden und in Hash Store ablegen
+				\li Durch alle linken durchgehen und alle Tupel, die zu dem Hash gehören aus dem Hash Store (Assoziativ Store) auslesen.
+			}
+			\stdImg{v11.1}{Hash Join}
+			\expl{Tabelle passt nicht in Speicher}{Ist die zu joinende Tabelle zu gross, um sie in den Speicher zu laden, muss sie partitioniert werden \ra\ vorsortierung}
+			
+			\definition{Hash Join}{$3*(M+N)$\\
+				M: Relation R mit M Pages\\
+				N: Relation S mit N Pages\\
+			}
+			
+			\examp{Hash Join}{L: 1000 Pages, R: 200 Pages, Buffer: 52\\
+				$3*(M+N) = 3*(1000+200)=3600$				
+			}
 
-\sse{Backup Planung}
-\uli{
-	\li Was soll gesichert werden? Sys-DB+User-DB
-	\li Wie lange zurück archivieren?
-	\li Maximale Ausfallzeit, d.h. Zeit für Recovery? Anzahl und Grösse der Änderungen sowie Zeitintervall
-	\li Wie soll gesichert werden
-	\li Recovery Tests	
-}
+		\sse{Nested Loop Join}
+			\uli{
+				\li Nur für kleine Tabellen
+				\li Für jeden linken jedes Rechte durchgehen und prüfen ob matched
+			}
+			\stdImg{v11.2}{Nested Loop Join}
+			
+			\sss{Nested Loop Block Join}
+				\uli{
+					\li  Jeder Block der äusseren Relation wird mit jedem Blcok der inneren Relation verglichen
+					\li Wenn man häufig einen Fremdschlüssel hat, auf dem bereits ein Index besteht
+				}
+				\stdImg{v11.3}{}
+				
+				\examp{Nested Loop Block Join}{
+					\oli{
+						\li So viele linke Blöcke in Memory laden, wie Platz haben (Blockset)
+						\li Einen rechten Block ins Memory laden (Input Buffer)
+						\li Vergleichen
+						\li Für jede Kombination von Blocksets und rechten Blöcken muss ein einzelner Vergeich gemacht werden.
+					}
+				}
+				\definition{Nested Loop Block Join}{$M + N*(M/(B-2))$\\
+					M: Relation R mit M Pages\\
+					N: Relation S mit N Pages\\
+					B: Buffergrösse\\
+					(B-2 weil noch je ein Block für Input/Output)
+				}
+				\examp{Nested Block Join Kosten}{Left Table: 1000 Pages, Right Table: 200 Pages, Memory: 50 Pages + Input/Output Block\\
+					$\#IO's = M + N*(M/(B-2)) = 1000+200*(1000/50) = 5000$
+				}
+				
+			\sss{Index Nested Loop}
+				\uli{
+					\li Wird nur eingesetzt, wenn alle Daten im Memory Platz haben
+					\li Alle Daten werden ins Memory geladen, anschliessend wird mittels dem Index zu jedem Tupel seine Join-Partner gefunden.
+				}
+				\oli{
+					\li Block laden
+					\li Für jedes Tupel über den Index die Fremdtupel Joinen
+					\li $\# TupelsLeft * IndexDepth$ (z.B: 1000*100 * 3)
+				}
 
 
-\expl{Stammdaten}{Daten, die nicht mehr verändert werden.}
+			\sse{Merge Join}
+				\uli{
+					\li Durch linke durchgehen und zu jedem das/die rechte(n) zuordnen
+					\li rechte müssen nicht durchsucht werden, weil sie sortiert sind
+					\li Sehr effizient, bedingt aber, dass die Tupels sortiert vorliegen
+				}
+				\stdImg{v11.4}{}
+				
+				\definition{Merge Join}{$M+N$, Sortierung: $O(N*log(N))$\\
+					M: Relation R mit M Pages\\
+					N: Relation S mit N Pages\\
+				}
+				
+				\examp{Merge Join}{L: 1000 Pages, R: 200 Pages, Buffer: 52\\
+					$M+N = 1200$
+				}
 
+		\expl{Index}{\uli{
+			\li Indexe erhöhen den Overhead
+			\li Indexe verlangsamen Update Operationen
+			\li Sind vor allem lesende Zugriff vorhanden, lohnen sich viele Indexe
+			\li Indexe sollten so optimiert sein, dass möglichst viele Anfragen beschleunigt werden
+			\li Index-Only Abfragen sind am schnellsten
+			\li Clustered Indexe beschleunigen Abfragen zusätzlich (nur eine pro Tabelle)
+			\li Ziel Der Indexe ist immer eine Minimierung von IO Operationen
+			\li Reihenfolge der Felder in zusammengesetzen Indexes müssen beachtet werden
+		}}
 
+	\se{DB Optimierung}
+		\uli{
+			\li DB Roundtripps minimieren: Batch-Transaktion, Alle Daten auf's Mal an die DB schicken, mit PlSQL Script verarbeiten
+			\li Denormalisierung: Redundanzen mit Triggers aktualisieren
+		}
+		
+		\sse{Logische Optimierung}
+			\uli{
+				\li Selektionen so früh wie möglich ausführen
+				\li  Basiert auf Termersetzung von Termen der Relationenalgebra anhand von Algebraäquivalenzen
+				\li Äquivalenzen als Ersetzungsregel eingesetzt, um anhand von heuristischen Vorgaben die Anfrage in die gewünschte Form zu bringen
+			}
 
-
-
-
+		\sse{Physische Optimierung}
+			Regel- (alt) oder Kostenbasierte Optimizer (modern)
+			\uli{
+				\li Einbezug von Indexes
+				\li Verbesserung der Analyse und Statistiken
+				\li Einsatz von Heuristiken (Daumenregeln) und Kosten
+			}
+			\definition{Selektivität}{ Selektivität: prozentueller Anteil der Tupels in einer
+Tabelle, die von einer Query geliefert werden.}
+			\definition{Dichte}{Dichte=durchschnittlicher prozentueller Anteil von
+Duplikaten.}
 
 
 
