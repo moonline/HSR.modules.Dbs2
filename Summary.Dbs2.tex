@@ -1405,6 +1405,204 @@ Tabelle, die von einer Query geliefert werden.}
 Duplikaten.}
 
 
+\ch{Verteilte DBMS}
+	\expl{VDBMS}{Besteht aus versch. Knoten. Knoten sind autonom. Jeder Knoten hat Teil an einer globalen Applikation. \ra\ Transaktionen und Queries sollen ohne Angabe von Konkreten Knoten ablaufen.}
+
+	\se{Homogene VDBMS}
+		\uli{
+			\li Alle Knoten haben identische Software
+			\li Alle Knoten wissen voneinander und arbeiten zusammen um
+		Benutzeranfragen zu verarbeiten.
+			\li Erscheint gegenüber dem Benutzer als ein System
+		}
+		\stdImg{v12.1}{Homogenes VDBMS benötigt ein globales Schema}
+
+		\sse{eng gekoppelte Multi Database System}
+			\stdImg{v12.2}{}
+			
+		\sse{lose gekoppelte MDBMS}
+			\stdImg{v12.3}{}
+			
+
+	\se{Heterogene VDBMS}
+		\uli{
+			\li Knoten können unterschiedliche SW und Schemas aufweisen
+			\li Schemaunterschiede \ra\ Hauptproblem für die Auführung verteilter
+		Queries
+			\li Softwareunterschiede \ra Hauptproblem für die Ausführung verteilter
+		Transaktionen.
+			\li Knoten wissen evtl nichts voneinander und können nur beschränkte
+		Funktionalitäten für die Kooperation anbieten
+		}
+		\stdImg{v12.4}{Oracle DB + über Gateway angebundenes Non-Oracle DBMS}
+		\expl{Gateway}{Bindet fremde Datenbank an bestehende DB an. Queries und Responses werden jeweils konvertiert.}
+		
+		
+	\se{Verteilte Datenhaltung}
+		\expl{Datenverteilung}{Benutzer soll keine Kenntnisse über Verteilung benötigen}
+		\expl{Transparenz}{
+			\uli{
+				\li Der Benutzer sieht eine globale Sicht, er kennt die Replikation
+der Fragmente nicht
+				\li Queries werden auf der Relation definiert, nicht auf den
+Fragmenten
+			}
+			\stdImg{v12.5}{}
+		}
+				
+		
+		\sse{Fragmentierung und Allokation}
+			\stdImg{v12.6}{}
+			\expl{Fragmentierung}{Unterteilung einer Relation in Fragmente. Fragmente enthalten genügend Information, um die Relation r zu rekonstruieren.}
+		
+		\sse{Horizontale Fragmentierung}
+			Jedes Tupel wird auf ein oder mehrere Fragmente aufgeteilt.
+			\stdImg{v12.7}{Beispiel Horizontale Fragmentierung}
+		
+		\sse{Vertikale Fragmentierung}
+			Das Schema einer Relation ist in mehrere kleinere Schemata aufgeteilt (Spalten werden in Fragmente aufgeteilt). Jedes Subschemata muss den Primärschlüssel enthalten!
+			\stdImg{v12.8}{Beispiel Vertikale Fragmentierung}
+		
+		\sse{Replikation}
+			\definition{Replikation}{ Eine Relation (oder eine Fragement einer Relation) ist repliziert, wenn sie (es) redundant in mehrern Knoten gespeicher ist.
+			}
+
+			\sss{Vorteile}
+				\uli{
+					\li Verfügbarkeit – auch bei Ausfall eines Reolikas
+					\li Parallelität der Ausführung von Queries.
+					\li Reduzierter Datentransfer beim lokalen Zugriff auf die
+replizierten Daten
+				}
+
+			\sss{Nachteile}
+				\uli{
+					\li Höhere Update Kosten \ra\ jedes Replikat muss aktualisiert werden
+					\li Komplexere Synchronisation \ra\ Aenderungen können zu temporär inkonsistenten Daten führen.
+				}
+
+
+	\se{Verteilte Transaktionen}
+		\uli{
+			\li Transaktion muss über alle Knoten gehen.
+			\li Benötigt wird immer ein globaler Transaktionsmanager
+		}
+		\stdImg{v12.9}{}
+		\stdImg{v12.10}{}
+		
+		\sss{2PC}
+			\definition{2PC - Two Face Commit}{Mehrere Transaktionen zu einer Gesammttransaktion zusammenfassen.}
+			\uli{
+				\li Transaction Manager: koordiniert Transaktionen über mehrere Resource Managers
+				\li Resource Manager (z.B. DBMS, Message Queue System): unterstützt lokale Transaktionen
+				\li Applikation: steuert Transaktionen
+			}
+			\stdImg{v12.11}{2PC}
+			\uli{
+				\li Sowohl der Transaction Manager wie die Resourcen führen ein WAL.
+				\li Wenn einer kein Ready sendet, wird die Transaktion abgebrochen.
+				\li Bei Fehler: Rollback an alle
+				\li TM stellt sicher, dass alle Knoten mit Commit oder Rollback abschliessen
+			}
+			\stdImg{v12.12}{Zustandsübergang 2 PC : TM}
+			\stdImg{v12.13}{Zustandsübergang 2PC : RM}
+
+		\sss{X/Open XA (DTM)}
+			\stdImg{v12.14}{}
+			\uli{
+				\li standardisiert Schnittstellen zwischen Komponenten in verteilten Systemen
+				\li wird von praktisch allen kommerziellen Systemen unterstützt
+				\li TransactionManager steuert Resourcen über XA Interface
+				\li Applikation darf nicht mehr direkt Resourcen ansprechen
+			}
+			\stdImg{v12.15}{JTA: Java Transaction API ist eine Schnittstelle basierend auf XA}
+			
+	\sse{Serialisierbarkeit}
+		2PL wird über alle Knoten realisiert.
+			
+	\sse{Locking}
+		\uli{
+			\li Globaler Lockmanager ist unabdingbar
+			\li Deadlock-Detektion schwierig: Lock-Manager kooperieren in einem verteilten Protokoll für die Detektion
+			\li Performance kann stark beeinträchtigt werden
+		}
+	
+	
+	\se{Synchronisation replizierter Daten}
+		\sse{Read One, Write All}
+			\uli{
+				\li lesen schnell
+				\li schreiben langsam
+			}
+			
+		\sse{Majority Protocol}
+			\uli{
+				\li Lesen oder Schreiben eines Objektes verlangt Zugriff
+auf Mehrheit der Replikate \ra\ dadurch kann kein Anderer lesen/schreiben.
+				\li  jedes Replikat kann gleichzeitig von mehreren
+Transaktionen gelesen, jedoch nur von einer
+Transaktion geändert werden
+				\li Daten können unter Umständen inkonsisten sein \ra\ Versionsnummer benötigt
+				\li lesen ist langsamer
+				\li Geht auch noch, wenn Knoten ausfällt
+				\li Hohe Kommunikationsausfall
+				\li Geht nicht für 2 Knoten
+				\li Deadlock auch bei nur einem Datenobjekt möglich (jeder hat 1/3 der Knoten gesperrt.
+			}
+			
+		\sse{Quorum Consensus Protocol}
+			\stdImg{v12.16}{}
+
+		\sse{Primary Copy}
+			\stdImg{v12.17}{}
+
+	\se{Deadlocks}
+		\sse{Timeout}
+			\uli{
+				\li Auflösen nach Timeout
+				\li Zu Kurz: Deadlocks, die keine sind, werden aufgehoben
+				\li Zu Lang: Bad Performance
+			}
+
+		\sse{Wait-for Graph}
+			\stdImg{v12.18}{}
+
+
+\se{Replikation}
+	\sse{Warum Replikation?}
+	\uli{
+		\li Höhere Verfügbarkeit
+		\li Niedriger Trafic
+		\li Bessere Performance durch lokalen Zugriff
+		\li Vorbeugung gegen Datenverlust
+	}
+
+	\sse{Anwendungen}
+	\uli{
+		\li Load-Balancing (High Performance Cluster, hochverfügbar skalierbar, Master-Master asynchron oder synchron, Sehr schnelle Verbindungen)
+			\stdImg{v14.1}{}
+		\li Remote Servers
+			\stdImg{v14.2}{}
+		\li Real-Time OLAP
+			\stdImg{v14.3}{}
+			\stdImg{v14.4}{}
+		\li Hochverfügbarkeit (Warm Standby)
+			\stdImg{v14.5}{}
+		\li Mobile Datenbanken
+			\stdImg{v14.6}{}
+	}
+
+	\sse{Konsistente Replikation}
+		\stdImg{v14.7}{Streng konsistente Replikation}
+		\stdImg{v14.8}{Schwach konsistente Replikation}
+		
+	\sse{Synchrone Replikation}
+		\stdImg{v14.9}{}
+
+	\sse{Asynchrone Replikation}
+		\stdImg{v14.10}{}
+
+
 
 
 
