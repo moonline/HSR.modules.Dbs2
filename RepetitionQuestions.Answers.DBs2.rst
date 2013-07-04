@@ -35,13 +35,14 @@ PL/SQL
 	* Funktion besitzt Rückgabewert.
 
 6)	
-	* Funktion (Procedure):	
-		.. code-block:: sql
+	* Funktion
+		* Aufbau:
+			.. code-block:: sql
 
-			CREATE OR REPLACE PROCEDURE test (note IN NUMBER) IS
-				-- do something
-			END;
-			/
+				CREATE OR REPLACE FUNCTION test (note IN NUMBER) IS
+					-- do something
+				END;
+				/
 
 
 		* Benutzung:
@@ -51,38 +52,44 @@ PL/SQL
 
 
 	* Stored Procedure:
-		* .. code-block:: sql
+		* Aufbau:
+			.. code-block:: sql
 	
-			CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
-			DECLARE
-				-- declare used variables
+				CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
+				DECLARE
+					-- declare used variables
+				BEGIN
+					-- programm
+				EXCEPTION
+					-- Exception handling
+				END;
+				/
+
+
+
+		* Benutzung: 
+		.. code-block:: sql
+
+			DECLARE 
+	
 			BEGIN
-				-- programm
-			EXCEPTION
-				-- Exception handling
+				test(10);
 			END;
 			/
 
 
-		* Benutzung: 
-		.. code-block:: PL/SQL	
-		DECLARE 
-	
-		BEGIN
-			test(10);
-		END;
-		/
-
 7)	Systemexceptions werden vom System geworfen, Benutzerexceptions vom Benutzer.
-	.. code-block:: PL/SQL	
-	...
-	DECLARE
-		/* benannte Exception: */
-		Ausnahme1 exception;
-	BEGIN
-		raise Ausnahme1;
-	EXCEPTION
-	...
+	.. code-block:: sql
+
+		...
+		DECLARE
+			-- benannte Exception
+			Ausnahme1 exception;
+		BEGIN
+			raise Ausnahme1;
+		EXCEPTION
+		...
+
 
 8)	Verbesserung der Performance, Security, Domain Logik
 	
@@ -90,10 +97,11 @@ PL/SQL
 
 10)	
 	* Um mittels SQL Systeminformationen oder Funktionen abzurufen, gibt es die Pseudotabelle dual, welche über gewöhnliche Select Statements Systeminformationen zurückgibt. 
-	* Bsp: 
-		.. code-block:: SQL
+	* Bsp: .. code-block:: sql
+
 		select sysdate from DUAL;  
 		select AbteilungSalaer('Entwicklung') from DUAL;
+
 
 Stored ProcedureS
 ----------------
@@ -125,14 +133,17 @@ Packages
 
 17) 
 	* Weil ein DBs kein Terminal besitzt und nicht interaktiv bedient wird. 
-	* .. code-block:: PL/SQL
+	* .. code-block:: sql
+
 		-- Package SET:
 		SET SERVeROUTPUT ON
 		DBMS_OUTPUT.PUT_LINE --(works like OS Pipe)
 
+
 18) 
 	* dbms_output, user_lock
-	* .. code-block:: PL/SQL
+	* Eigene: .. code-block:: sql
+
 		CREATE OR REPLACE PACKAGE emp_actions AS  -- spec
 			-- function and proedure declaration
 		END emp_actions;
@@ -140,6 +151,7 @@ Packages
 		CREATE OR REPLACE PACKAGE BODY emp_actions AS  -- body
 			-- function and proedure specification
 		END emp_actions;
+
 
 Cursors
 -------
