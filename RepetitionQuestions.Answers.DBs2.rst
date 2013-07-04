@@ -20,12 +20,13 @@ DBs1 Repetition
 	* Isolation: Transaktionen werden ausgeführt, als wären sie seriell
 	* Durability: Gespeicherte Änderungen gehen nicht irgendwann verloren
 
-4) 	.. code-block:: SQL
-		:linenos:
+4) 	.. code-block:: python
+
 		CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
 		INSERT ...
 		SELECT studiengang, avg(note) as studiengang, note from Abschluss
 		GROUP BY studiengang
+
 
 PL/SQL
 ------
