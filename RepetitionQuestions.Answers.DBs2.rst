@@ -21,10 +21,11 @@ DBs1 Repetition
 	* Durability: Gespeicherte Änderungen gehen nicht irgendwann verloren
 
 4) 	.. code-block:: SQL
-	CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
-	INSERT ...
-	SELECT studiengang, avg(note) as studiengang, note from Abschluss
-	GROUP BY studiengang
+		:linenos:
+		CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
+		INSERT ...
+		SELECT studiengang, avg(note) as studiengang, note from Abschluss
+		GROUP BY studiengang
 
 PL/SQL
 ------
@@ -34,27 +35,27 @@ PL/SQL
 
 6)	
 	* Funktion (Procedure):	
-		* .. code-block:: PL/SQL	
-		CREATE OR REPLACE PROCEDURE test (note IN NUMBER) IS
-			/* do something */
-		END;
-		/
+		.. code-block:: PL/SQL	
+			CREATE OR REPLACE PROCEDURE test (note IN NUMBER) IS
+				-- do something
+			END;
+			/
 
 		* Benutzung:
-		.. code-block:: PL/SQL	
-		SELECT name, test(note) from Abschluss
+			.. code-block:: PL/SQL	
+				SELECT name, test(note) from Abschluss
 
 	* Stored Procedure:
 		* .. code-block:: PL/SQL	
-		CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
-		DECLARE
-			/* declare used variables */
-		BEGIN
-			/* programm */
-		EXCEPTION
-			/* Exception handling */
-		END;
-		/
+			CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
+			DECLARE
+				-- declare used variables
+			BEGIN
+				-- programm
+			EXCEPTION
+				-- Exception handling
+			END;
+			/
 
 		* Benutzung: 
 		.. code-block:: PL/SQL	
