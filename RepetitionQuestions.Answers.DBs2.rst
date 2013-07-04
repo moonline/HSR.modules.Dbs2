@@ -12,7 +12,7 @@ DBs1 Repetition
 		* dem Datenbankschema (DB Spezifisch)
 	* interne (phyische) Ebene
 
-2) 	Online Transaction Processing. Sofort Verarbeitung, nicht als Batch über die Nacht irgendwann sondern in Echtzeit
+2) Online Transaction Processing. Sofort Verarbeitung, nicht als Batch über die Nacht irgendwann sondern in Echtzeit
 
 3) 	
 	* Atomarität: Transaction wird als ganzes oder nicht abgeschlossen
@@ -20,12 +20,12 @@ DBs1 Repetition
 	* Isolation: Transaktionen werden ausgeführt, als wären sie seriell
 	* Durability: Gespeicherte Änderungen gehen nicht irgendwann verloren
 
-4) 	.. code-block:: sql
+4) .. code-block:: sql
 
-		CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
-		INSERT ...
-		SELECT studiengang, avg(note) as studiengang, note from Abschluss
-		GROUP BY studiengang
+	CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
+	INSERT ...
+	SELECT studiengang, avg(note) as studiengang, note from Abschluss
+	GROUP BY studiengang
 
 
 PL/SQL
@@ -68,17 +68,17 @@ PL/SQL
 
 
 		* Benutzung: 
-		.. code-block:: sql
+			.. code-block:: sql
 
-			DECLARE 
+				DECLARE 
 	
-			BEGIN
-				test(10);
-			END;
-			/
+				BEGIN
+					test(10);
+				END;
+				/
 
 
-7)	Systemexceptions werden vom System geworfen, Benutzerexceptions vom Benutzer.
+7) Systemexceptions werden vom System geworfen, Benutzerexceptions vom Benutzer.
 	.. code-block:: sql
 
 		...
@@ -91,16 +91,17 @@ PL/SQL
 		...
 
 
-8)	Verbesserung der Performance, Security, Domain Logik
+8) Verbesserung der Performance, Security, Domain Logik
 	
-9)	Updateable Views
+9) Updateable Views
 
 10)	
 	* Um mittels SQL Systeminformationen oder Funktionen abzurufen, gibt es die Pseudotabelle dual, welche über gewöhnliche Select Statements Systeminformationen zurückgibt. 
-	* Bsp: .. code-block:: sql
+	* Bsp: 
+		.. code-block:: sql
 
-		select sysdate from DUAL;  
-		select AbteilungSalaer('Entwicklung') from DUAL;
+			select sysdate from DUAL;  
+			select AbteilungSalaer('Entwicklung') from DUAL;
 
 
 Stored ProcedureS
@@ -133,24 +134,26 @@ Packages
 
 17) 
 	* Weil ein DBs kein Terminal besitzt und nicht interaktiv bedient wird. 
-	* .. code-block:: sql
+	* Code:
+		.. code-block:: sql
 
-		-- Package SET:
-		SET SERVeROUTPUT ON
-		DBMS_OUTPUT.PUT_LINE --(works like OS Pipe)
+			-- Package SET:
+			SET SERVeROUTPUT ON
+			DBMS_OUTPUT.PUT_LINE --(works like OS Pipe)
 
 
 18) 
 	* dbms_output, user_lock
-	* Eigene: .. code-block:: sql
+	* Eigene: 
+		.. code-block:: sql
 
-		CREATE OR REPLACE PACKAGE emp_actions AS  -- spec
-			-- function and proedure declaration
-		END emp_actions;
+			CREATE OR REPLACE PACKAGE emp_actions AS  -- spec
+				-- function and proedure declaration
+			END emp_actions;
 
-		CREATE OR REPLACE PACKAGE BODY emp_actions AS  -- body
-			-- function and proedure specification
-		END emp_actions;
+			CREATE OR REPLACE PACKAGE BODY emp_actions AS  -- body
+				-- function and proedure specification
+			END emp_actions;
 
 
 Cursors
