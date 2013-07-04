@@ -249,6 +249,7 @@ Triggers
 	END;
 	/
 
+s
 32)  ..code-block:: sql
 	
 	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
@@ -256,6 +257,7 @@ Triggers
 		:new.absolute := :new.temperature + 273;
 	END;
 	/
+
 
 33) 
 	1. Before statement Trigger
