@@ -204,7 +204,7 @@ Constraints
 	* schwach: erst nach der Transaktion geprüft
 24) Auf jeder Spalte.
 
-25)..code-block:: sql
+25) .. code-block:: sql
 
 	-- anlegen
 	ALTER TABLE x ADD CONSTRAINT myConstraint 'name' NOT NULL;
@@ -238,7 +238,7 @@ Triggers
 
 30) Mit den Rechten ihres Owners
 
-31) ..code-block:: sql
+31) .. code-block:: sql
 	
 	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
 	BEGIN
@@ -249,8 +249,8 @@ Triggers
 	END;
 	/
 
-s
-32)  ..code-block:: sql
+
+32)  .. code-block:: sql
 	
 	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
 	BEGIN
