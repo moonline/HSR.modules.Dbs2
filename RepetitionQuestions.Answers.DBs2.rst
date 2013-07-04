@@ -107,8 +107,8 @@ PL/SQL
 			select AbteilungSalaer('Entwicklung') from DUAL;
 
 
-Stored ProcedureS
-----------------
+Stored Procedures
+-----------------
 11)	
 	* Anonymes PL/SQL wird von einem Client aus ausgeführt.
 		* (-) wird jedes Mal geparst
@@ -195,4 +195,78 @@ Cursors
 
 Constraints
 -----------
-22) 
+22) Definieren Konsistenzbedingungen. Gewährleisten, dass bestimmte Bedingungen zwischen den Daten immer gelten.
+
+23) 
+	* primär: Während einer Operation geprüfte (z.B. Werttyp)
+	* sekundär: Nach einer Operation geprüfte (z.B. Summe über Rows, ...)
+	* stark: während Transaktion geprüft
+	* schwach: erst nach der Transaktion geprüft
+24) Auf jeder Spalte.
+
+25)..code-block:: sql
+
+	-- anlegen
+	ALTER TABLE x ADD CONSTRAINT myConstraint 'name' NOT NULL;
+	-- löschen
+	ALTER TABLE x DROP CONSTRAINT myConstraint;
+	-- deaktivieren
+	ALTER TABLE x DISABLE CONSTRAINT myConstraint;
+	-- enable
+	ALTER TABLE x ENABLE CONSTRAINT myContraint;
+	-- list
+	SELECT constraint_name, constraint_type FROM user_constraints WHERE table_name = 'x';
+
+
+Triggers
+--------
+26) 
+	* Abhängige Attribute berechnen
+	* Updateable Views
+	* Constraints
+	* Zugriffsschutz
+
+27) update, insert, delete
+
+28) 
+	* before-Triggers: werden VOR der Änderung der Daten ausgeführt, gedacht zur Überprüfung von Vorbedingungen
+	* after-Trigger: werden NACH der Änderung der Daten ausgeführt, gedacht zur Überprüfung von Nachbedingungen
+	* Row-Triggers: Werden für jede betroffene Row ausgeführt
+	* Statement-Trigger: Wird für jedes ausgeführte Statement aufgerufen
+
+29) Zur Referenzierung der alten Daten (Row vor der Änderung) und der neuen (Row nach der Änderung)
+
+30) Mit den Rechten ihres Owners
+
+31) ..code-block:: sql
+	
+	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
+	BEGIN
+		IF :new.temperatur > 100 THEN
+			-- planet destroit or failure -> don't insert
+			INSERT INTO log (:new.id, :new.temperature);
+		ENF IF;
+	END;
+	/
+
+32)  ..code-block:: sql
+	
+	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
+	BEGIN
+		:new.absolute := :new.temperature + 273;
+	END;
+	/
+
+33) 
+	1. Before statement Trigger
+	2. Row Trigger:
+		1. Before Row Trigger
+		2. After Row Trigger
+	3. After statement trigger
+
+34) 
+	* Instead Of: Ersetzen Aktionen. Z.B. Delete Trigger, der statt dem Löschen der Rows diese nur als gelöscht markiert
+	* log on/log of: Triggern Benutzer Events
+
+Updateable Views
+^^^^^^^^^^^^^^^^
