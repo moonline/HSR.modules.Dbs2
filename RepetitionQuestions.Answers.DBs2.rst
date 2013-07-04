@@ -20,7 +20,7 @@ DBs1 Repetition
 	* Isolation: Transaktionen werden ausgeführt, als wären sie seriell
 	* Durability: Gespeicherte Änderungen gehen nicht irgendwann verloren
 
-4) 	.. code-block:: python
+4) 	.. code-block:: sql
 
 		CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
 		INSERT ...
@@ -36,18 +36,23 @@ PL/SQL
 
 6)	
 	* Funktion (Procedure):	
-		.. code-block:: PL/SQL	
+		.. code-block:: sql
+
 			CREATE OR REPLACE PROCEDURE test (note IN NUMBER) IS
 				-- do something
 			END;
 			/
 
+
 		* Benutzung:
-			.. code-block:: PL/SQL	
+			.. code-block:: sql
+	
 				SELECT name, test(note) from Abschluss
 
+
 	* Stored Procedure:
-		* .. code-block:: PL/SQL	
+		* .. code-block:: sql
+	
 			CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
 			DECLARE
 				-- declare used variables
@@ -57,6 +62,7 @@ PL/SQL
 				-- Exception handling
 			END;
 			/
+
 
 		* Benutzung: 
 		.. code-block:: PL/SQL	
