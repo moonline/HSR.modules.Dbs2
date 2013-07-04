@@ -1,7 +1,10 @@
 DBs2 FS13 Repetitionsfragen Antworten
 =====================================
 
-Keine Garantie für Korrektheit!
+Repetitionsfragen: https://github.com/moonline/Dbs2/blob/master/RepetitionQuestions.DBs1.tex
+
+Keine Garantie auf Korrektheit!
+Korrekturen und Ergänzungen sind herzlich willkommen.
 
 DBs1 Repetition
 ---------------
@@ -158,4 +161,38 @@ Packages
 
 Cursors
 -------
-19) 
+19) Cursor werden benutzt, um in einem Set von Rows auf eine bestimmte Row zu zeigen, bzw. über Rows zu iterieren.
+
+20) .. code-block:: sql
+	
+	CREATE TABLE messwerte (standort INTEGER, temperatur NUMERIC);
+	INSERT ...
+	CREATE TABLE tropenNaechte (standort INTEGER, temperatur NUMERIC);
+	CREATE TABLE settings (option VARCHAR, value INTEGER);
+	INSERT INTO settings ('level', 20);
+
+    .. code-block:: sql
+	
+	DECLARE
+		-- variablen und cursor deklarieren
+		CURSOR temperatureAlarm (level IN INTEGER) IS
+			SELECT temperatur, standort FROM messwerte FOR INSERT;
+		temperatur messwerte.temperatur%TYPE;
+		standort messwerte.standort%TYPE;
+	BEGIN
+		-- öffnen, iterieren
+		OPEN temperatureAlarm;
+		LOOP
+			FETCH temperatureAlarm INTO temperatur, standort;
+			IF temperatur > level THEN
+				INSERT INTO tropenNaechte ('standort', 'temperatur') VALUES (standort, temperatur);
+			END IF;
+		END LOOP;
+	END;
+	/
+
+21) Überprüfen, ob der Cursor geöffnet ist (%ISOPEN), ob etwas gefunden wurde (%NOTFOUND) / (%FOUND) und die Anzahl Zeilen ermitteln (%ROWCOUNt)
+
+Constraints
+-----------
+22) 
