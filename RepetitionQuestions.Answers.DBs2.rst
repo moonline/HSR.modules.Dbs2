@@ -453,3 +453,112 @@ Dictionaries
 	
 ORDBMS
 ======
+62) Objektrelationale Datenbanken arbeiten wie relational, d.h. sie liefern als Resultat eine Tabelle, ermöglichen es jedoch, in Zellen Objekte mit Eigenschaften und Methoden abzulegen.
+
+
+Objekttypen
+-----------
+63) Objekttypen sind benutzerdefinierte Typen
+	.. code-block:: sql
+
+		CREATE OR REPLACE TYPE Person AS OBJECT (
+			Name VARCHAR(30),
+			Birthdate DATE,
+			Addr Adress, -- Nutzung von Objekttypen als Member
+			MEMBER FUNCTION getAge RETURN NUMBER -- Methode, implementation extern
+		);
+		
+		
+64) Eine Spalte vom Typ Objekt. Ermöglicht das Ablegen von Objekten in Zellen.
+
+	.. code-block:: sql
+	
+		CREATE TABLE Material (
+			Name VARCHAR(20),
+			Owner Person
+		);
+		
+		INSERT INTO Material VALUES (
+			"Beistelltisch", 
+			Person(
+				"Peter Muster", 
+				TO_DATE("31.03.69","DD.MM.JJ"), 
+				Address("Bahnhofstrasse 3", "8000", "Zürich)
+			)
+		);
+		
+		SELECT Owner.Name FROM Material WHERE Owner.Address = Address("Bahnhofstrasse 3", "8000", "Zürich);
+		
+		
+65) Objekttabellen repräsentieren ganze Objekte(sind von einem Objekttyp) und sind, objektwertige, referenzierbare Tabellen. Die Rows sind Objekte des zugrundeliegenden Typs und können über OIDs angesprochen werden. Vorteil: Durch die OIDs sind die Zeilen Datenbankweit eindeutig indentifizierbar.
+	.. code-block:: sql
+	
+		CREATE TABLE Mitarbeiter OF Person ( -- Spalten müssen den Objektattributen entsprechen
+			Name NOT NULL,
+			Birthdate NOT NULL,
+			Addr Not NULL
+		);
+		
+		-- Vererbung (NOT FINAL)
+		CREATE OR REPLACE TYPE Person AS OBJECT (
+			-- members
+		) NOT FINAL; -- not final definiert den Objekttyp als Erbbar
+		
+		CREATE OR REPLACE Type Student UNDER Person (
+			StudentenNr VARCHAR(10)
+		);
+		
+		
+66) Wie gewöhnliche SQL Queries
+	.. code-block:: sql
+	
+		SELECT Name, Brithdate FROM Person p WHERE p.Addr = Address("Bahnhofstrasse 3", "8000", "Zürich);
+		
+		
+67) ..code-block:: sql
+		
+	-- Implementation in separat übersetzbarer Typedefinition
+	CREATE OR REPLACE TYPE BODY Person AS
+		MEMBER FUNCTION getAge RETURN NUMBER IS
+			BEGIN
+				RETURN (SYSDATE - SELF.Birthdate) / 365;
+			END;
+	END;
+	
+	-- usage
+	SELECT p.Name, p.Birthdate, p.getAge() FROM Mitarbeiter p;
+	
+
+68) MAP liefert einen Basistyp mit bekannter Sortierreihenfolge zurück, ORDER ermöglicht das implementieren einer eigenen Sortierung.
+	.. code-block:: sql
+	
+		MAP MEMBER FUNCTION getAge RETURN INTEGER;
+		
+	
+69) REF(t) liefert eine Referenz, DEREF(ref) liefert Zugriff auf das Row Object. Referenzen sind nicht fest verdrahtet sondern nur Zeiger, daher muss Für den Objektzugriff Dereferenziert werden.
+	.. code-block:: sql
+
+		CREATE OR REPLACE TYPE Person AS OBJECT (
+			Parent REF Person,
+			...
+		);
+	
+70) Schränkt den Werteberech der über die ganze Datenbank eindeutigen OIDs ein auf die betreffende Tabelle (Optimierung).
+
+71) .. code-block:: sql
+	
+		INSERT INTO TABLE Family VAUES (
+			( SELECT REF(t) FROM Family f WHERE f.Name = "Esmeralda Reihner" ), -- Referenz erzeugen
+			"Maria Reihner",
+			...
+		);
+		
+		SELECT DEREF(Parent) FROM Family f WHERE f.Name = "Maria Reihner";
+		
+72) Oracle prüft Referenzen nicht auf Veraltete (Dangling). Daher muss mit ISDANGLING oder ISNOTDANGLING dies selbst abgefragt werden.
+
+
+Varrays und Nested Tables
+-------------------------
+73) 
+
