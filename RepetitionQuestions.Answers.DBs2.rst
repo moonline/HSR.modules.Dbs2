@@ -560,5 +560,38 @@ Objekttypen
 
 Varrays und Nested Tables
 -------------------------
-73) 
+73) VARRAYS sind eindimensionale inline Elementmengen. Genutzt für Elementmengen, die bevorzugt einmal geschrieben und dann nur noch gelesen werden.
+	.. code-block:: sql
+	
+		CREATE Or Replace TYPE addressList AS VARRAY(2) OF VARCHAR2(50);
+		
+		
+74) Nested Tables sind Tabellen in Tabellen. Sie sind sinnvoll, wenn in einer Zelle strukturierte Daten abgelegt werden müssen, die nur zu dieser Row gehören. 
+	.. code-block:: sql
+	
+		CREATE TYPE Phonenumbers AS TABLE OF NUMBER;
+		
+		CREATE TABLE Telefonbuch (Name VARCHAR(30), Phones Phonenumbers);
+		
+		-- Nested Table als extern verfügbare Tabelle speichern:
+		CREATE TABLE Telefonbuch (
+			...
+		) NESTED TABLE Phones STORE AS PhoneList;
+
+
+75)
+	VARRAY
+		* Eindimensionale Daten
+		* bevorzugt write once, read multiple
+		* Wenn Grösse vorher bekannt
+	Nested Table
+		* Komplexere Daten, die je nach dem auch als direkte Tabelle ansprechbar sein sollen
+		* Wenn Grösse von Angang an nicht bekannt ist
+		
+76) Hash Table mässiger Array Store. Über den Key kann der Index eines Elementes ermittelt werden.
+
+
+ODBS
+====
+
 
