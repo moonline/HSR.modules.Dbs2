@@ -470,7 +470,6 @@ Objekttypen
 		
 		
 64) Eine Spalte vom Typ Objekt. Ermöglicht das Ablegen von Objekten in Zellen.
-
 	.. code-block:: sql
 	
 		CREATE TABLE Material (
@@ -515,7 +514,7 @@ Objekttypen
 		SELECT Name, Brithdate FROM Person p WHERE p.Addr = Address("Bahnhofstrasse 3", "8000", "Zürich);
 		
 		
-67) ..code-block:: sql
+67) .. code-block:: sql
 		
 	-- Implementation in separat übersetzbarer Typedefinition
 	CREATE OR REPLACE TYPE BODY Person AS
@@ -593,5 +592,96 @@ Varrays und Nested Tables
 
 ODBS
 ====
+77) Ist die DB sehr nah mit der Anwendung verzahnt (z.B. eine Smartphone App, die Daten nur für sich persistiert), so ist ein ODBS die sinnvollste Anwendung. Auch wenn das Anwendungsumfeld der Datenbank sehr homogen ist (z.B. alles Java), kann eine ODBS sinnvoll sein.
+
+78) Die Relationale Datenbank kann keine verschachtelten Queries ausführen, wie z.B über die Telefonnummern der Kinder eines Mitarbeiters.
+
+79) ODBS speichert und liefert Objekt und macht objektorientierte Abfragen. Relationale Datanbanken behandeln Daten immer als Tabellen und liefern auch das Resultat als Tabelle.
+
+80) 
+	Page Server
+		weiss nichts über die innere Struktur der Objekte und kann auch keine Abfragen darüber machen. Liefert Pages als Ergebnis.
+	Object Server
+		Kennt die innere Struktur der Objekte, besitzt einen Object Manager und kann Abfragen auf Attribute von Objekten machen. Liefert als Ergebnis Objekte.
+	
+81)
+	* Speicherung komplexer Objekte mit Identität, Kapselung, Typen, Klassen und Hirarchien
+	* Effiziente Persistierung
+	* Concurrency
+	* Reliability
+	* Deklarative Query Language
+
+82) 
+	* Die Objekte werden nicht transparent (durchsuchbar) abgelegt
+	* Referenzen sind ein Problem
+	* die Struktur der Objekte (Klasse) wird nicht mit abgelegt.
+	* Transaktionen sind nicht möglich
+	* Die Objekte werden unvollständig abgelegt
+	
+83) Von einer Wurzel aus werden alle durch Referenzen erreichbare Objekte persistiert
+
+84) Siehe 80.
+
+85) Konvertierung der Objektreferenzen im Hauptspeicher in Datenbankreferenzen und umgekehrt
+
+86)
+	logische OID
+		In der DB wird eine eigene Object ID verwendet -> Mapping notwendig
+	physische OID
+		In der DB wird die Objektreferenz vom Hauptspeicher verwendet -> Direkte übernahme, kein Mapping
+		
+87) Über ein Mapping werden die Datenbankreferenzen der Objekte in in-Memory Referenzen übersetzt.
+
+88) Object Data Management Group specification: Definiert einen Standard für die Objektdarstellung und Abfragesprachen für Objectdatenbanken.
+		ODL
+			* Object Definition Language
+			* Attribute und Beziehungn
+			* Verwerbung, Schnittstellen
+			* OIDs
+			* Persistence by Reachability
+			* ACID Transaktionen
+		OQL
+			Object Query Language
+			
+89) Definiert Objekte
+	.. code-block:: odl
+	
+		class Node {
+			attribute string name;
+			relationship Node parent inverse Node::children; // one-to many
+			relationship set(Node) children inverse Node::parent; // many to one
+		}
+			
+		class Tree (extent allNodes, key nodeId) { // extent: root of reachability tree
+			...
+		}
+		
+		
+90) Eine SQL ähnliche Abfragesprache für Objekte
+
+91) .. code-block:: oql
+
+		select c.name from node n, n.children.children c; // get names of the child-child nodes
+
+		
+db4o
+----
+92) db4o speichert Java Objekte als Objekte ab und liefert über eine Abfragesprache Objektsets zurück
+
+93)
+	* SODA Queries: Abfrage anhand von SODA Attribut Bedingungen
+	* Native Queries: Abfrage in der verwendeten Sprache (z.B. java) mit Attribut Bedingungen
+	* Query by Example QBE: Anhand eines Teilobjektes wird der Rest gefunden
+
+94) Jedes öffnen des DB Containers erzeugt eine Transaction, die mit commit oder rollback abgeschlossen werden kann.
+
+95) 
+	* aktualisieren: Objekt laden, verändern, db.store(objekt). 
+	* db.delete(objekt)
+	* Kasdade: db4o löscht nur explizit übergebene Objekte. Für Cascade Delete muss dies explizit verlangt werden.
+
+96) Lazy Loading von Referenzierten Objekten, bzw. die Ladetiefe in einem Objektgraph und die Grenze, ab wo mit Lazy Loading gearbeitet wird.
 
 
+NoSQL Datenbanken
+=================
