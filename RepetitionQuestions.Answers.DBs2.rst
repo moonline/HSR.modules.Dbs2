@@ -685,3 +685,57 @@ db4o
 
 NoSQL Datenbanken
 =================
+97)
+	* Entstanden im 21. Jht
+	* Keine genormte Abfragesprache, oft JSON verwendet
+	* Consistency keine Absolute Bedingungen
+	* Gut verteilbar, skalierbar
+	* Open Source
+	* Schemalos
+	* Ausgelegt auf grosse Datenmengen
+	
+98) 
+	Key- / Value DB
+		* Speicherung von Schlüsselpaaren
+		* Vorteil: einfach, effizient
+		* Nachteil: Keine Struktur möglich, Value ist für DB unsichtbar (opak)
+	Document DB
+		* Speicherung von Strukturen
+		* Vorteil: Daten können sauber strukturiert werden, Abfragen über Beziehungen möglich, Values sind strukturiert und dokumentiert
+	Column Family Stores
+		* Zusammenfassen von Columnen zu Gruppen
+		* Vorteil: Gruppieren von Columnen
+	Graph DB
+		* Speichern von Beziehungen und Netz Strukturen
+		* Effiziente Algorithmen für Graphverarbeitung und Graphsuchverfahren
+	XML DB
+		* Ablegen von XML Strukturen
+	Objekdatenbanken
+		* Speichern von Objektstrukturen
+		
+99)
+	Sharding
+		Aufteilen der Daten (bsp. Kunden a-f auf Knoten 1, Kunden f-k auf Knoten 2, ...) -> Verbessert Performance
+	Replication
+		Kopieren der Daten auf die Knoten -> Erhöht Availability
+		
+100)
+	CAP
+		consistency, availability, partition tolerance
+	Theorem
+		Es können nur zwei der drei Bedingungen eingehalten werden. Bei relationalen Datenbanken wird vor allem auf consistency und availability gsetzt, bei NoSQL DB's auf availability und partition tolerance.
+		
+101)
+	BASE
+		* BA: basically available. Verfügbarkeit ist von hoher Priorität
+		* S: soft state: Konsistenz ist kein dauerhafter Zustand
+		* Eventual consistent: Daten sind manchmal inkonsistent
+		
+102) Daten werden zerlegt und die zerlegten Teile verteilt berechnet. Anschliessend werden die Resultate verteilt zusammengefasst. Aus den erneuten Resultaten werden zusammen mit andern Resultaten wieder neue generiert. Map Reduce eignet sich sehr gut zur verteilten Berechnung von zerlegbaren Daten.
+	Beispiel Statistik: Besucherstatistik wird in Tage zerlegt. Pro Tag und Angebot werden die Besucher berechnet. Anschliessend werden alle Besucher pro Angebot zusammengefasst und am Schluss die Besucher aller ANgebote.
+	
+	
+
+		
+		
+		
