@@ -113,27 +113,33 @@ Stored Procedures
 
 11
 --
-	* Anonymes PL/SQL wird von einem Client aus ausgeführt.
-		* (-) wird jedes Mal geparst
-		* (-) Wird wie SQL genutzt
-		* (+) Einfacher zu deklarieren
-	* Stored Procedures werden geparst und in der DB zu den Daten abgelegt. Stored Procedures können mit dem Namen von andern PL/SQL Blöcken aus abgerufen werden. 
-		* (+) SP können von Triggers aufgerufen werden.
-		* (+) Werden nur einmal geparst
-		* (+) von überall aufrufbar
-		* (+) Kann von externer App aufgerufen werden
+
+Anonymes PL/SQL wird von einem Client aus ausgeführt.
+
+* (-) wird jedes Mal geparst
+* (-) Wird wie SQL genutzt
+* (+) Einfacher zu deklarieren
+
+Stored Procedures werden geparst und in der DB zu den Daten abgelegt.
+Stored Procedures können mit dem Namen von andern PL/SQL Blöcken aus abgerufen werden.
+
+* (+) SP können von Triggers aufgerufen werden.
+* (+) Werden nur einmal geparst
+* (+) von überall aufrufbar
+* (+) Kann von externer App aufgerufen werden
 
 12
 --
 
-	* In Java geschriebene Prozedur wird als .java oder .class File in die DB geladen.
-	* Java SP wird als solche "publiziert" in der DB.
-	* Clients und andere SP's können SP verwenden.
-	
+* In Java geschriebene Prozedur wird als .java oder .class File in die DB geladen.
+* Java SP wird als solche "publiziert" in der DB.
+* Clients und andere SP's können SP verwenden.
+
 13
 --
 
-DB Benötigt dazu Java VM inkl. Garbage Collection, Memory, Class Loader, ... . Java Code wird als Blob in DB abgelegt.
+DB Benötigt dazu Java VM inkl. Garbage Collection, Memory, Class Loader, etc...
+Java Code wird als Blob in DB abgelegt.
 
 14
 --
@@ -141,6 +147,7 @@ DB Benötigt dazu Java VM inkl. Garbage Collection, Memory, Class Loader, ... . 
 SP schreiben, in die DB laden, publizieren, verwenden.
 
 15
+--
 
 Folgendes Beispiel funktioniert nur mit PostgreSQL.
 
