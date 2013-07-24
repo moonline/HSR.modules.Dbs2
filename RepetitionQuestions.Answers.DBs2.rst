@@ -110,7 +110,9 @@ PL/SQL
 
 Stored Procedures
 =================
-11)	
+
+11
+--
 	* Anonymes PL/SQL wird von einem Client aus ausgeführt.
 		* (-) wird jedes Mal geparst
 		* (-) Wird wie SQL genutzt
@@ -121,16 +123,36 @@ Stored Procedures
 		* (+) von überall aufrufbar
 		* (+) Kann von externer App aufgerufen werden
 
-12)	
+12
+--
+
 	* In Java geschriebene Prozedur wird als .java oder .class File in die DB geladen.
 	* Java SP wird als solche "publiziert" in der DB.
 	* Clients und andere SP's können SP verwenden.
 	
-13) DB Benötigt dazu Java VM inkl. Garbage Collection, Memory, Class Loader, ... . Java Code wird als Blob in DB abgelegt.
+13
+--
 
-14) SP schreiben, in die DB laden, publizieren, verwenden.
+DB Benötigt dazu Java VM inkl. Garbage Collection, Memory, Class Loader, ... . Java Code wird als Blob in DB abgelegt.
 
-15)
+14
+--
+
+SP schreiben, in die DB laden, publizieren, verwenden.
+
+15
+
+Folgendes Beispiel funktioniert nur mit PostgreSQL.
+
+.. code-block:: sql
+
+	CREATE LANGUAGE plpythonu;
+	CREATE OR REPLACE FUNCTION multiplier (numbers integer[])
+	RETURNS integer
+	AS $$
+		from operator import mul
+		return reduce(mul, numbers)
+	$$ LANGUAGE plpythonu;
 
 Packages
 ========
