@@ -134,30 +134,49 @@ Stored Procedures
 
 Packages
 ========
-16) Dienen der Gruppierung von Funktionen und Stored Procedures. Können weder verschachtelt noch parametrisiert werden.
 
-17) 
-	* Weil ein DBs kein Terminal besitzt und nicht interaktiv bedient wird. 
-	* Code:
-		.. code-block:: sql
+16
+--
 
-			-- Package SET:
-			SET SERVeROUTPUT ON
-			DBMS_OUTPUT.PUT_LINE --(works like OS Pipe)
+Dienen der Gruppierung von Funktionen und Stored Procedures. Können weder verschachtelt noch parametrisiert werden.
 
+Vorteile von Packages:
 
-18) 
-	* dbms_output, user_lock
-	* Eigene: 
-		.. code-block:: sql
+* Modularität: Gruppieren von logisch zusammenhängenden Komponenten.
+* Einfacheres Applikationsdesign: Interfaces und Implementation sind getrennt.
+* Information Hiding: Es können auch "private" und dadurch versteckte Komponenten deklariert werden.
+* Zusätzliche Funktionalität: Öffentliche Variabeln und Cursor eins Packages sind während einer gesamten Session aktiv. D.h. sie können zwischen verschiedenen Unterprogrammen geteilt werden und können Daten über mehrere Transaktionen hinweg speichern, ohne dass eine separate Tabelle benötigt wird.
+* Bessere Performance: Funktionen werden beim ersten Zugriff ins Memory geladen und sind danach ohne zusätzlichen Disk I/O verfügbar.
 
-			CREATE OR REPLACE PACKAGE emp_actions AS  -- spec
-				-- function and proedure declaration
-			END emp_actions;
+17
+--
 
-			CREATE OR REPLACE PACKAGE BODY emp_actions AS  -- body
-				-- function and proedure specification
-			END emp_actions;
+Weil ein DBMS kein Terminal besitzt und nicht interaktiv bedient wird. 
+
+Beispielcode:
+
+.. code-block:: sql
+
+	-- Package SET:
+	SET SERVEROUTPUT ON
+	DBMS_OUTPUT.PUT_LINE --(works like OS Pipe)
+
+18
+--
+
+``dbms_output`` oder ``user_lock``.
+
+Beispiel eigenes Paket:
+
+.. code-block:: sql
+
+	CREATE OR REPLACE PACKAGE emp_actions AS  -- spec
+		-- function and procedure declaration
+	END emp_actions;
+
+	CREATE OR REPLACE PACKAGE BODY emp_actions AS  -- body
+		-- function and procedure specification
+	END emp_actions;
 
 
 Cursors
