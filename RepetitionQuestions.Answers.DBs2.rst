@@ -339,55 +339,116 @@ Auf jeder Spalte.
 
 Triggers
 ========
-26) 
-	* Abhängige Attribute berechnen
-	* Updateable Views
-	* Constraints
-	* Zugriffsschutz
 
-27) update, insert, delete
+26
+--
 
-28) 
-	* before-Triggers: werden VOR der Änderung der Daten ausgeführt, gedacht zur Überprüfung von Vorbedingungen
-	* after-Trigger: werden NACH der Änderung der Daten ausgeführt, gedacht zur Überprüfung von Nachbedingungen
-	* Row-Triggers: Werden für jede betroffene Row ausgeführt
-	* Statement-Trigger: Wird für jedes ausgeführte Statement aufgerufen
+* Abhängige Attribute berechnen
+* Updateable Views
+* Constraints
+* Zugriffsschutz
 
-29) Zur Referenzierung der alten Daten (Row vor der Änderung) und der neuen (Row nach der Änderung)
+27
+--
 
-30) Mit den Rechten ihres Owners
+Alle Operationen die Daten verändern: ``INSERT``, ``UPDATE``, ``DELETE``.
 
-31) .. code-block:: sql
+28
+--
+
+* Before-Triggers: Werden VOR der Änderung der Daten ausgeführt, gedacht zur Überprüfung von Vorbedingungen
+* After-Trigger: Werden NACH der Änderung der Daten ausgeführt, gedacht zur Überprüfung von Nachbedingungen
+* Row-Triggers: Werden für jede betroffene Row ausgeführt
+* Statement-Trigger: Wird für jedes ausgeführte Statement aufgerufen
+
+29
+--
+
+Bei Oracle zur Referenzierung der alten Daten (Row vor der Änderung) und der neuen Daten (Row nach der Änderung).
+Unter PostgreSQL heissen die entsprechenden Variablen ``OLD`` und ``NEW``.
+
+30
+--
+
+* Oracle: Mit den Rechten ihres Owners.
+* PostgreSQL: Mit den Rechten des Callers.
+* MS SQL Server: Kann mit ``EXECUTE AS`` definiert werden. Standard: ``EXECUTE AS CALLER``.
+
+31
+--
+
+Oracle:
+
+.. code-block:: sql
 	
-	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
+	CREATE OR REPLACE TRIGGER check
+	BEFORE INSERT ON messdaten
+	FOR EACH ROW
+	AS
 	BEGIN
 		IF :new.temperatur > 100 THEN
-			-- planet destroit or failure -> don't insert
+			-- planet destroyed or failure -> don't insert
 			INSERT INTO log (:new.id, :new.temperature);
-		ENF IF;
+		END IF;
 	END;
 	/
-
-
-32)  .. code-block:: sql
 	
-	CREATE OR REPLACE TRIGGER check BEFORE INSERT ON messdaten FOR EACH ROW AS
+PostgreSQL:
+
+.. code-block:: sql
+
+	-- First, create trigger function
+	CREATE OR REPLACE FUNCTION verify_temperature() RETURNS trigger AS
+	$$
+	BEGIN
+		-- If temperature is too high, write log and return OLD version of row.
+		-- Otherwise return NEW version of row.
+		IF NEW.temperatur > 100 THEN
+			INSERT INTO log VALUES (NEW.id, NEW.temperatur);
+			RETURN OLD;
+		ELSE
+			RETURN NEW;
+		END IF;
+	END
+	$$ LANGUAGE plpgsql;
+	
+	CREATE TRIGGER mycheck
+	BEFORE INSERT ON messdaten
+	FOR EACH ROW
+	EXECUTE PROCEDURE verify_temperature();
+
+
+32
+--
+
+Oracle:
+
+.. code-block:: sql
+	
+	CREATE OR REPLACE TRIGGER check
+	BEFORE INSERT ON messdaten
+	FOR EACH ROW
+	AS
 	BEGIN
 		:new.absolute := :new.temperature + 273;
 	END;
 	/
 
 
-33) 
-	1. Before statement Trigger
-	2. Row Trigger:
-		1. Before Row Trigger
-		2. After Row Trigger
-	3. After statement trigger
+33
+--
 
-34) 
-	* Instead Of: Ersetzen Aktionen. Z.B. Delete Trigger, der statt dem Löschen der Rows diese nur als gelöscht markiert
-	* log on/log of: Triggern Benutzer Events
+1. Before Statement Trigger
+2. Row Trigger:
+	1. Before Row Trigger
+	2. After Row Trigger
+3. After Statement Trigger
+
+34
+--
+
+* Instead Of: Ersetzen Aktionen. Z.B. DELETE Trigger, der statt dem Löschen der Rows diese nur als gelöscht markiert.
+* Log on/Log off: Triggern bei Anmeldung/Abmeldung am System.
 
 Updateable Views
 ----------------
