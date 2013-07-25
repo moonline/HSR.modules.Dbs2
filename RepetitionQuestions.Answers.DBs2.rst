@@ -67,47 +67,47 @@ PL/SQL
 
 **Funktion**
 
-	Aufbau:
-	
-	.. code-block:: sql
+Aufbau:
 
-		CREATE OR REPLACE FUNCTION test (note IN NUMBER) IS
-			-- do something
-		END;
-		/
+.. code-block:: sql
 
-	Benutzung:
-	
-	.. code-block:: sql
+	CREATE OR REPLACE FUNCTION test (note IN NUMBER) IS
+		-- do something
+	END;
+	/
 
-		SELECT name, test(note) from Abschluss
+Benutzung:
+
+.. code-block:: sql
+
+	SELECT name, test(note) from Abschluss
 
 **Stored Procedure**
 
-	Aufbau:
-	
-	.. code-block:: sql
+Aufbau:
 
-		CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
-		DECLARE
-			-- Declare used variables and exceptions
-		BEGIN
-			-- Body
-		EXCEPTION
-			-- Exception handling
-		END;
-		/
+.. code-block:: sql
 
-	Benutzung:
-	
-	.. code-block:: sql
+	CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
+	DECLARE
+		-- Declare used variables and exceptions
+	BEGIN
+		-- Body
+	EXCEPTION
+		-- Exception handling
+	END;
+	/
 
-		DECLARE 
+Benutzung:
 
-		BEGIN
-			test(10);
-		END;
-		/
+.. code-block:: sql
+
+	DECLARE 
+
+	BEGIN
+		test(10);
+	END;
+	/
 
 7
 -
@@ -214,7 +214,7 @@ Packages
 
 Dienen der Gruppierung von Funktionen und Stored Procedures. Können weder verschachtelt noch parametrisiert werden.
 
-Vorteile von Packages:
+**Vorteile von Packages**
 
 * Modularität: Gruppieren von logisch zusammenhängenden Komponenten.
 * Einfacheres Applikationsdesign: Interfaces und Implementation sind getrennt.
@@ -240,7 +240,7 @@ Beispielcode:
 
 ``dbms_output`` oder ``user_lock``.
 
-Beispiel eigenes Paket:
+**Beispiel eigenes Paket**
 
 .. code-block:: sql
 
@@ -377,7 +377,7 @@ Unter PostgreSQL heissen die entsprechenden Variablen ``OLD`` und ``NEW``.
 31
 --
 
-Oracle:
+**Oracle**
 
 .. code-block:: sql
 	
@@ -393,7 +393,7 @@ Oracle:
 	END;
 	/
 	
-PostgreSQL:
+**PostgreSQL**
 
 .. code-block:: sql
 
@@ -421,7 +421,7 @@ PostgreSQL:
 32
 --
 
-Oracle:
+**Oracle**
 
 .. code-block:: sql
 	
@@ -452,28 +452,46 @@ Oracle:
 
 Updateable Views
 ----------------
-35) Temporäre Tabellen werden nicht dauerhaft gespeichert, sondern am Ende der Transaktion wieder gelöscht. Zudem ist die Aktualität der temp. Tabelle unbekannt.
+35
+--
 
-36) Weil die unter den Views liegenden Tabellen bereits Indexe enthalten und Indexe auf Views unnötig sind.
+Temporäre Tabellen werden nicht dauerhaft gespeichert, sondern am Ende der Transaktion wieder gelöscht. Zudem ist die Aktualität der temp. Tabelle unbekannt.
 
-37) Updateable View sind Views, die über Trigger Änderungen in die dahinter liegenden Tabellen schreiben. Views lassen sich per Default nur updaten, wenn sie keine Joins enthalten und der Primär Schlüssel enthalten ist. Ansonsten kann das DBS die geänderten Rows nicht mehr eindeutig den Rows den dahinter liegenden Tabellen zuordnen.
+36
+--
 
-38) Ein Update-Instead-Of Trigger auf der View übernimmt die Update Daten und schreibt sie einzeln in die dahiner liegenden Tabellen.
-	.. code-block:: sql
-	
-		CREATE OR REPLACE TRIGGER updateMesswertzusammenfassung INSTEAD OF UPDATE ON messwertzusammenfassung FOR EACH ROW
-		BEGIN
-			UPDATE messwerte SET temperature = :n.temperature WHERE id = :n.messwertId;
-			UPDATE standort SET name = :n.name WHERE id = :n.standortId;
-		END;
-		/
+Weil die unter den Views liegenden Tabellen bereits Indexe enthalten und Indexe auf Views unnötig sind.
+
+37
+--
+
+Updateable View sind Views, die über Trigger Änderungen in die dahinter liegenden Tabellen schreiben. Views lassen sich per Default nur updaten, wenn sie keine Joins enthalten und der Primär Schlüssel enthalten ist. Ansonsten kann das DBS die geänderten Rows nicht mehr eindeutig den Rows den dahinter liegenden Tabellen zuordnen.
+
+38
+--
+
+Ein Update-Instead-Of Trigger auf der View übernimmt die Update Daten und schreibt sie einzeln in die dahiner liegenden Tabellen.
+
+.. code-block:: sql
+
+	CREATE OR REPLACE TRIGGER updateMesswertzusammenfassung INSTEAD OF UPDATE ON messwertzusammenfassung FOR EACH ROW
+	BEGIN
+		UPDATE messwerte SET temperature = :n.temperature WHERE id = :n.messwertId;
+		UPDATE standort SET name = :n.name WHERE id = :n.standortId;
+	END;
+	/
 		
 
 Materialized Views
 ------------------
-39) Gespeicherte Ausgaben einer View. Die Materialized View aktualisiert sich nicht, sondern stellt eine Snapshot zu einem bestimmten Zeitpunkt von einer View dar.
+39
+--
 
-40) Virtual Tables haben überhaupt nichts mit Views zu tun, auch wenn es danach tönt. Virtual Tables sind Data Wrappers für externe Schnittstellen, z.B. csv.
+Gespeicherte Ausgaben einer View. Die Materialized View aktualisiert sich nicht, sondern stellt eine Snapshot zu einem bestimmten Zeitpunkt von einer View dar.
+
+40
+--
+Virtual Tables haben überhaupt nichts mit Views zu tun, auch wenn es danach tönt. Virtual Tables sind Data Wrappers für externe Schnittstellen, z.B. csv.
 
 
 Datenstrukturen
@@ -481,135 +499,177 @@ Datenstrukturen
 
 Arrays
 ------
-41) Arrays sind indexierte Listen von Elementen gleichen Datentyps in einer Datenbankzelle.
+41
+--
 
-42) Sets dürfen das gleiche Element nur einmal beinhalten.
+Arrays sind indexierte Listen von Elementen gleichen Datentyps in einer Datenbankzelle.
 
-43) Wenn eine dynamische Liste von Werten in der Datenbank abgelegt werden muss, z.B. wenn bei jedem Wareneingang die Anzahl Paletten notiert werden und später daraus der Tagestotal ermittelt werden soll (Jeden Tag sind es unterschiedliche Anzahl Wareneingänge), man jedoch nicht für jeden Wareneingang eine einzelne Zeile anlegen möchte.
+42
+--
+Sets dürfen das gleiche Element nur einmal beinhalten.
 
-44) Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesammte Zelle (das ganze Array) neu geschrieben werden muss.
+43
+--
+Wenn eine dynamische Liste von Werten in der Datenbank abgelegt werden muss, z.B. wenn bei jedem Wareneingang die Anzahl Paletten notiert werden und später daraus der Tagestotal ermittelt werden soll (Jeden Tag sind es unterschiedliche Anzahl Wareneingänge), man jedoch nicht für jeden Wareneingang eine einzelne Zeile anlegen möchte.
 
-45) .. code-block:: sql
-		
-		CREATE TABLE wareneingangsStatistik (
-			DATE datum,
-			INTEGER[] anzahlPaletten
-		);
-		
-		INSERT INTO wareneingangsStatistik (12.04.13, ARRAY[5,6,7,3]);
-		
-		SELECT anzahlPaletten FROM wareneingangsStatistik; // {5,6,7,3}
-		
-		
-46) 
-	array_to_text()
-		Gibt ein Array als Text zurück.
-	unnest()
-		Gibt ein Array als Tabelle zurück
-		
-47)
-	<@ Operator
-		Ermittelt, ob das Linke Array ein Subset des rechten ist. ARRAY[1,2] <@ ARRAY[1,2,3] // true
-	= Operator
-		Vergleicht zwei Arrays
-	&& Operator
-		Ermittelt, ob ein Element in beiden Arrays vorkommt ARRAY[1,3] && ARRAY[1,2,3] // true
+44
+--
+Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesammte Zelle (das ganze Array) neu geschrieben werden muss.
 
-48) Mit FIND_IN_SET oder unnest und einer subquery falls es etwas aufwändiger ist.
+45
+--
+.. code-block:: sql
+		
+	CREATE TABLE wareneingangsStatistik (
+		DATE datum,
+		INTEGER[] anzahlPaletten
+	);
+	
+	INSERT INTO wareneingangsStatistik (12.04.13, ARRAY[5,6,7,3]);
+	
+	SELECT anzahlPaletten FROM wareneingangsStatistik; // {5,6,7,3}
+		
+		
+46
+--
+array_to_text()
+	Gibt ein Array als Text zurück.
+unnest()
+	Gibt ein Array als Tabelle zurück
+		
+47
+--
+<@ Operator
+	Ermittelt, ob das Linke Array ein Subset des rechten ist. ARRAY[1,2] <@ ARRAY[1,2,3] // true
+= Operator
+	Vergleicht zwei Arrays
+&& Operator
+	Ermittelt, ob ein Element in beiden Arrays vorkommt ARRAY[1,3] && ARRAY[1,2,3] // true
+
+48
+--
+Mit FIND_IN_SET oder unnest und einer subquery falls es etwas aufwändiger ist.
 
 
 Graphen
 -------
-49) Graphen sind Netzstrukturen und können zur Abbildung von vermaschten Netzen wie das Internet, Liniennetzen von Verkehrsmitteln oder Verbindungen zwischen Personen, etc. eingesetzt werden.
-	Graphen setzen sich zusammen aus Knoten (Nodes/Vertices V), verbunden mit Ecken (Edges E).
+49
+--
+Graphen sind Netzstrukturen und können zur Abbildung von vermaschten Netzen wie das Internet, Liniennetzen von Verkehrsmitteln oder Verbindungen zwischen Personen, etc. eingesetzt werden.
+Graphen setzen sich zusammen aus Knoten (Nodes/Vertices V), verbunden mit Ecken (Edges E).
 
-50) 
+50
+--
 
-51) Common Table Expression, Eine Sprache, um über die temporäre Tabelle zu iterieren und sie zu verändern, die während eine Transaktion besteht. Im Unterschied zur Subquery ist die CTE viel mächtiger als die Subquery, die einfach eine Query innerhalb einer Query aufruft und keinen schreibenden Zugriff auf die temporäre Tabelle hat.
+51
+--
+Common Table Expression, Eine Sprache, um über die temporäre Tabelle zu iterieren und sie zu verändern, die während eine Transaktion besteht. Im Unterschied zur Subquery ist die CTE viel mächtiger als die Subquery, die einfach eine Query innerhalb einer Query aufruft und keinen schreibenden Zugriff auf die temporäre Tabelle hat.
 
-52) Ein Tree ist ein Graph, der keine Zyklen besitzt und oft gerichtet ist.
+52
+--
+Ein Tree ist ein Graph, der keine Zyklen besitzt und oft gerichtet ist.
 
-53) Trees eignen sich, um Hirarchien (z.B. in Firmen) oder Verwandtschaften abzubilden. Write-once, read-many Szenarien.
+53
+--
+Trees eignen sich, um Hirarchien (z.B. in Firmen) oder Verwandtschaften abzubilden. Write-once, read-many Szenarien.
 
-54) 
-	Adjazenzliste
-		Zu jedem Knoten wird eine Referenz auf den Elternknoten abgespeichert. Die Wurzel besitzt eine NULL Referenz, die Blätter besitzen keine Knoten, die auf sie verweisen.
-			.. code-block:: sql
-				
-				CREATE TABLE tree (id, name, parent);
-				INSERT INTO TABLE tree (1, "CEO", NULL);
-				INSERT INTO TABLE tree (2, "chef technic", 1);
-				INSERT INTO TABLE tree (3, "chef accounts", 1);
-				INSERT INTO TABLE tree (4, "robert, the mechanic", 2);
-				INSERT INTO TABLE tree (5, "paul, the bimbo", 2);
-				
-				SELECT name FROM tree WHERE parent = 2;
-				
+54
+--
+**Adjazenzliste**
+
+Zu jedem Knoten wird eine Referenz auf den Elternknoten abgespeichert. Die Wurzel besitzt eine NULL Referenz, die Blätter besitzen keine Knoten, die auf sie verweisen.
+
+.. code-block:: sql
 	
-	Nested Set Model
-		Baum mit Knoten, die jeweils einen linken und rechten Wert (minimal und Maximal Knoten Id der Childes) und eine Referenz auf einen Parent Knoten besitzen. Beim Einfügen oder Entfernen muss unter Umständen der Baum umsortiert werden und die Werte für links und rechts müssen angepasst werden. Der linke Wert ist immer kleiner als der rechte. Beider Werte sind grösser als der linke Wert der Elternmenge und kleiner als der Rechte.
-			.. code-block:: sql
-				
-				CREATE TABLE tree (id, name, parent, left, right);
-				INSERT INTO tree (1, "CEO", NULL, 1, 7);
-				INSERT INTO tree (2, "chef technic", 1, 2, 8);
-				INSERT INTO tree (3, "chef accounts", 1, 3, 4);
-				INSERT INTO tree (4, "robert, the mechanic", 2, 4, 7);
-				INSERT INTO tree (5, "paul, the bimbo", 2, 5, 6);
-				
-				SELECT name FROM tree WHERE parent = 2;
-				
-				// 1 CEO l:1, r:2
-				
-				// 1 CEO l:1, r:4
-				//   2 chef technic l:2, r: 3
-				
-				// 1 CEO l:1, r:5
-				//   2 chef technic l:2, r: 3
-				//   3 chef accounts l:3, r:4
-				
-				// 1 CEO l:1, r:7
-				//   2 chef technic l:2, r: 6
-				//     4 robert l:4, r:5
-				//   3 chef accounts l:3, r:4
-				
-				// 1 CEO l:1, r:7
-				//   2 chef technic l:2, r: 8
-				//     4 robert l:4, r:7
-				//     5 paul, l:5, r:6
-				//   3 chef accounts l:3, r:4
-				
-				
-55) Itree's bestehen aus Pfaden, deren Knoten mit Punkten getrennt sind. Mehrere Pfade ergeben einen Baum.
-	.. code-block:: sql
+	CREATE TABLE tree (id, name, parent);
+	INSERT INTO TABLE tree (1, "CEO", NULL);
+	INSERT INTO TABLE tree (2, "chef technic", 1);
+	INSERT INTO TABLE tree (3, "chef accounts", 1);
+	INSERT INTO TABLE tree (4, "robert, the mechanic", 2);
+	INSERT INTO TABLE tree (5, "paul, the bimbo", 2);
 	
-		CREATE TABLE enterprise (id INTEGER, pers ltree);
-		INSERT INTO enterprise (1, 'CEO');
-		INSERT INTO enterprise (2, 'CEO.chefTechnic');
-		INSERT INTO enterprise (3, 'CEO.chefAccounts');
-		INSERT INTO enterprise (4, 'CEO.chefTechnic.robert');
-		INSERT INTO enterprise (5, 'CEO.chefTechnic.paul');
-		
-		SELECT * FROM enterprise WHERE pers ~ '*.chefTechnic.*'; // Liefert alle die einen chefTechnic im Pfad haben
-		SELECT * FROM enterprise WHERE pers <@ 'CEO.chefTechnic'::ltree; // Liefert alle Nachfolger von chefTechnic
-		SELECT lca(pers) FROM enterprise WHERE id in (4,5); // Liefert gemeinsame Vorgesetzte von robert und paul
-		
-		
-56) Zur Speicherung von dynamischen Inhalten wie E-mails, Datensätzen mit zusätzlichen Feldern oder Metadaten zu in der DB abgelegten Dateien.
+	SELECT name FROM tree WHERE parent = 2;
+			
 
-57) .. code-block:: sql
+**Nested Set Model**
+
+Baum mit Knoten, die jeweils einen linken und rechten Wert (minimal und Maximal Knoten Id der Childes) und eine Referenz auf einen Parent Knoten besitzen. Beim Einfügen oder Entfernen muss unter Umständen der Baum umsortiert werden und die Werte für links und rechts müssen angepasst werden. Der linke Wert ist immer kleiner als der rechte. Beider Werte sind grösser als der linke Wert der Elternmenge und kleiner als der Rechte.
+
+.. code-block:: sql
+	
+	CREATE TABLE tree (id, name, parent, left, right);
+	INSERT INTO tree (1, "CEO", NULL, 1, 7);
+	INSERT INTO tree (2, "chef technic", 1, 2, 8);
+	INSERT INTO tree (3, "chef accounts", 1, 3, 4);
+	INSERT INTO tree (4, "robert, the mechanic", 2, 4, 7);
+	INSERT INTO tree (5, "paul, the bimbo", 2, 5, 6);
+	
+	SELECT name FROM tree WHERE parent = 2;
+	
+	// 1 CEO l:1, r:2
+		
+	// 1 CEO l:1, r:4
+	//   2 chef technic l:2, r: 3
+	
+	// 1 CEO l:1, r:5
+	//   2 chef technic l:2, r: 3
+	//   3 chef accounts l:3, r:4
+	
+	// 1 CEO l:1, r:7
+	//   2 chef technic l:2, r: 6
+	//     4 robert l:4, r:5
+	//   3 chef accounts l:3, r:4
+	
+	// 1 CEO l:1, r:7
+	//   2 chef technic l:2, r: 8
+	//     4 robert l:4, r:7
+	//     5 paul, l:5, r:6
+	//   3 chef accounts l:3, r:4
+				
+				
+55
+--
+Itree's bestehen aus Pfaden, deren Knoten mit Punkten getrennt sind. Mehrere Pfade ergeben einen Baum.
+
+.. code-block:: sql
+
+	CREATE TABLE enterprise (id INTEGER, pers ltree);
+	INSERT INTO enterprise (1, 'CEO');
+	INSERT INTO enterprise (2, 'CEO.chefTechnic');
+	INSERT INTO enterprise (3, 'CEO.chefAccounts');
+	INSERT INTO enterprise (4, 'CEO.chefTechnic.robert');
+	INSERT INTO enterprise (5, 'CEO.chefTechnic.paul');
+	
+	SELECT * FROM enterprise WHERE pers ~ '*.chefTechnic.*'; // Liefert alle die einen chefTechnic im Pfad haben
+	SELECT * FROM enterprise WHERE pers <@ 'CEO.chefTechnic'::ltree; // Liefert alle Nachfolger von chefTechnic
+	SELECT lca(pers) FROM enterprise WHERE id in (4,5); // Liefert gemeinsame Vorgesetzte von robert und paul
+		
+		
+56)
+--
+Zur Speicherung von dynamischen Inhalten wie E-mails, Datensätzen mit zusätzlichen Feldern oder Metadaten zu in der DB abgelegten Dateien.
+
+57
+--
+.. code-block:: sql
 
 	SELECT query_to_xml(query, TRUE, FALSE);
 	
 	
-58) Mit XPATH können XML Strukturen definiert werden. Mit XQUERY lassen sie sich parsen.
+58
+--
+Mit XPATH können XML Strukturen definiert werden. Mit XQUERY lassen sie sich parsen.
 
 
 Dictionaries
 ------------
-59) Dictionaries sind Key-/Value Stores, die es erlauben eine Assoziative Liste von Elementen in einer Datenbankzelle abzulegen.
+59
+--
+Dictionaries sind Key-/Value Stores, die es erlauben eine Assoziative Liste von Elementen in einer Datenbankzelle abzulegen.
 
-60) .. code-block:: sql
+60
+--
+.. code-block:: sql
 	
 	CREATE TABLE settings (id INTEGER, values hstore);
 	
@@ -619,7 +679,9 @@ Dictionaries
 	SELECT values->'size' FROM settings WHERE values @> '"size"=>3'
 	
 
-61) .. code-block:: sql
+61
+--
+.. code-block:: sql
 
 	CREATE TABLE content (id, tags);
 	
@@ -632,68 +694,91 @@ Dictionaries
 	
 ORDBMS
 ======
-62) Objektrelationale Datenbanken arbeiten wie relational, d.h. sie liefern als Resultat eine Tabelle, ermöglichen es jedoch, in Zellen Objekte mit Eigenschaften und Methoden abzulegen.
+62
+--
+
+Objektrelationale Datenbanken arbeiten wie relational, d.h. sie liefern als Resultat eine Tabelle, ermöglichen es jedoch, in Zellen Objekte mit Eigenschaften und Methoden abzulegen.
 
 
 Objekttypen
 -----------
-63) Objekttypen sind benutzerdefinierte Typen
-	.. code-block:: sql
 
-		CREATE OR REPLACE TYPE Person AS OBJECT (
-			Name VARCHAR(30),
-			Birthdate DATE,
-			Addr Adress, -- Nutzung von Objekttypen als Member
-			MEMBER FUNCTION getAge RETURN NUMBER -- Methode, implementation extern
-		);
+63
+--
+
+Objekttypen sind benutzerdefinierte Typen
+
+.. code-block:: sql
+
+	CREATE OR REPLACE TYPE Person AS OBJECT (
+		Name VARCHAR(30),
+		Birthdate DATE,
+		Addr Adress, -- Nutzung von Objekttypen als Member
+		MEMBER FUNCTION getAge RETURN NUMBER -- Methode, implementation extern
+	);
 		
 		
-64) Eine Spalte vom Typ Objekt. Ermöglicht das Ablegen von Objekten in Zellen.
-	.. code-block:: sql
+64
+--
+
+Eine Spalte vom Typ Objekt. Ermöglicht das Ablegen von Objekten in Zellen.
+
+.. code-block:: sql
+
+	CREATE TABLE Material (
+		Name VARCHAR(20),
+		Owner Person
+	);
 	
-		CREATE TABLE Material (
-			Name VARCHAR(20),
-			Owner Person
-		);
-		
-		INSERT INTO Material VALUES (
-			"Beistelltisch", 
-			Person(
-				"Peter Muster", 
-				TO_DATE("31.03.69","DD.MM.JJ"), 
-				Address("Bahnhofstrasse 3", "8000", "Zürich)
-			)
-		);
-		
-		SELECT Owner.Name FROM Material WHERE Owner.Address = Address("Bahnhofstrasse 3", "8000", "Zürich);
-		
-		
-65) Objekttabellen repräsentieren ganze Objekte(sind von einem Objekttyp) und sind, objektwertige, referenzierbare Tabellen. Die Rows sind Objekte des zugrundeliegenden Typs und können über OIDs angesprochen werden. Vorteil: Durch die OIDs sind die Zeilen Datenbankweit eindeutig indentifizierbar.
-	.. code-block:: sql
+	INSERT INTO Material VALUES (
+		"Beistelltisch", 
+		Person(
+			"Peter Muster", 
+			TO_DATE("31.03.69","DD.MM.JJ"), 
+			Address("Bahnhofstrasse 3", "8000", "Zürich)
+		)
+	);
 	
-		CREATE TABLE Mitarbeiter OF Person ( -- Spalten müssen den Objektattributen entsprechen
-			Name NOT NULL,
-			Birthdate NOT NULL,
-			Addr Not NULL
-		);
-		
-		-- Vererbung (NOT FINAL)
-		CREATE OR REPLACE TYPE Person AS OBJECT (
-			-- members
-		) NOT FINAL; -- not final definiert den Objekttyp als Erbbar
-		
-		CREATE OR REPLACE Type Student UNDER Person (
-			StudentenNr VARCHAR(10)
-		);
-		
-		
-66) Wie gewöhnliche SQL Queries
-	.. code-block:: sql
+	SELECT Owner.Name FROM Material WHERE Owner.Address = Address("Bahnhofstrasse 3", "8000", "Zürich);
 	
-		SELECT Name, Brithdate FROM Person p WHERE p.Addr = Address("Bahnhofstrasse 3", "8000", "Zürich);
+		
+65
+--
+
+Objekttabellen repräsentieren ganze Objekte(sind von einem Objekttyp) und sind, objektwertige, referenzierbare Tabellen. Die Rows sind Objekte des zugrundeliegenden Typs und können über OIDs angesprochen werden. Vorteil: Durch die OIDs sind die Zeilen Datenbankweit eindeutig indentifizierbar.
+
+.. code-block:: sql
+
+	CREATE TABLE Mitarbeiter OF Person ( -- Spalten müssen den Objektattributen entsprechen
+		Name NOT NULL,
+		Birthdate NOT NULL,
+		Addr Not NULL
+	);
+	
+	-- Vererbung (NOT FINAL)
+	CREATE OR REPLACE TYPE Person AS OBJECT (
+		-- members
+	) NOT FINAL; -- not final definiert den Objekttyp als Erbbar
+	
+	CREATE OR REPLACE Type Student UNDER Person (
+		StudentenNr VARCHAR(10)
+	);
+	
+		
+66
+--
+
+Wie gewöhnliche SQL Queries
+
+.. code-block:: sql
+
+	SELECT Name, Brithdate FROM Person p WHERE p.Addr = Address("Bahnhofstrasse 3", "8000", "Zürich);
 		
 		
-67) .. code-block:: sql
+67
+--
+
+.. code-block:: sql
 		
 	-- Implementation in separat übersetzbarer Typedefinition
 	CREATE OR REPLACE TYPE BODY Person AS
@@ -707,33 +792,49 @@ Objekttypen
 	SELECT p.Name, p.Birthdate, p.getAge() FROM Mitarbeiter p;
 	
 
-68) MAP liefert einen Basistyp mit bekannter Sortierreihenfolge zurück, ORDER ermöglicht das implementieren einer eigenen Sortierung.
-	.. code-block:: sql
-	
-		MAP MEMBER FUNCTION getAge RETURN INTEGER;
-		
-	
-69) REF(t) liefert eine Referenz, DEREF(ref) liefert Zugriff auf das Row Object. Referenzen sind nicht fest verdrahtet sondern nur Zeiger, daher muss Für den Objektzugriff Dereferenziert werden.
-	.. code-block:: sql
+68
+--
 
-		CREATE OR REPLACE TYPE Person AS OBJECT (
-			Parent REF Person,
-			...
-		);
-	
-70) Schränkt den Werteberech der über die ganze Datenbank eindeutigen OIDs ein auf die betreffende Tabelle (Optimierung).
+MAP liefert einen Basistyp mit bekannter Sortierreihenfolge zurück, ORDER ermöglicht das implementieren einer eigenen Sortierung.
 
-71) .. code-block:: sql
+.. code-block:: sql
+
+	MAP MEMBER FUNCTION getAge RETURN INTEGER;
+		
 	
-		INSERT INTO TABLE Family VAUES (
-			( SELECT REF(t) FROM Family f WHERE f.Name = "Esmeralda Reihner" ), -- Referenz erzeugen
-			"Maria Reihner",
-			...
-		);
+69
+--
+
+REF(t) liefert eine Referenz, DEREF(ref) liefert Zugriff auf das Row Object. Referenzen sind nicht fest verdrahtet sondern nur Zeiger, daher muss Für den Objektzugriff Dereferenziert werden.
+
+.. code-block:: sql
+
+	CREATE OR REPLACE TYPE Person AS OBJECT (
+		Parent REF Person,
+		...
+	);
+	
+70
+--
+
+Schränkt den Werteberech der über die ganze Datenbank eindeutigen OIDs ein auf die betreffende Tabelle (Optimierung).
+
+71
+--
+
+.. code-block:: sql
+	
+	INSERT INTO TABLE Family VAUES (
+		( SELECT REF(t) FROM Family f WHERE f.Name = "Esmeralda Reihner" ), -- Referenz erzeugen
+		"Maria Reihner",
+		...
+	);
+	
+	SELECT DEREF(Parent) FROM Family f WHERE f.Name = "Maria Reihner";
 		
-		SELECT DEREF(Parent) FROM Family f WHERE f.Name = "Maria Reihner";
-		
-72) Oracle prüft Referenzen nicht auf Veraltete (Dangling). Daher muss mit ISDANGLING oder ISNOTDANGLING dies selbst abgefragt werden.
+72
+--
+Oracle prüft Referenzen nicht auf Veraltete (Dangling). Daher muss mit ISDANGLING oder ISNOTDANGLING dies selbst abgefragt werden.
 
 
 Varrays und Nested Tables
