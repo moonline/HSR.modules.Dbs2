@@ -162,18 +162,25 @@ Packages
 
 Cursors
 =======
-19) Cursor werden benutzt, um in einem Set von Rows auf eine bestimmte Row zu zeigen, bzw. über Rows zu iterieren.
 
-20) .. code-block:: sql
-	
+19
+--
+
+Cursor werden benutzt, um in einem Set von Rows auf eine bestimmte Row zu zeigen, bzw. über Rows zu iterieren.
+
+20
+--
+
+.. code-block:: sql
+
 	CREATE TABLE messwerte (standort INTEGER, temperatur NUMERIC);
 	INSERT ...
 	CREATE TABLE tropenNaechte (standort INTEGER, temperatur NUMERIC);
 	CREATE TABLE settings (option VARCHAR, value INTEGER);
 	INSERT INTO settings ('level', 20);
 
-    .. code-block:: sql
-	
+.. code-block:: sql
+
 	DECLARE
 		-- variablen und cursor deklarieren
 		CURSOR temperatureAlarm (level IN INTEGER) IS
@@ -192,20 +199,38 @@ Cursors
 	END;
 	/
 
-21) Überprüfen, ob der Cursor geöffnet ist (%ISOPEN), ob etwas gefunden wurde (%NOTFOUND) / (%FOUND) und die Anzahl Zeilen ermitteln (%ROWCOUNt)
+21
+--
+
+Überprüfen, ob der Cursor geöffnet ist (``%ISOPEN``), ob etwas gefunden wurde (``%NOTFOUND`` / ``%FOUND``) und wie viele Zeilen vorhanden sind (``%ROWCOUNT``).
 
 Constraints
 ===========
-22) Definieren Konsistenzbedingungen. Gewährleisten, dass bestimmte Bedingungen zwischen den Daten immer gelten.
 
-23) 
-	* primär: Während einer Operation geprüfte (z.B. Werttyp)
-	* sekundär: Nach einer Operation geprüfte (z.B. Summe über Rows, ...)
-	* stark: während Transaktion geprüft
-	* schwach: erst nach der Transaktion geprüft
-24) Auf jeder Spalte.
+22
+--
 
-25) .. code-block:: sql
+Constraints definieren Konsistenzbedingungen.
+Sie gewährleisten, dass bestimmte Bedingungen zwischen den Daten immer gelten.
+Wenn eine solche Bedingung/Regel verletzt wird, wird die laufende Operation abgebrochen.
+
+23
+--
+
+* Primär: Wird während einer Operation geprüft (z.B. Werttyp)
+* Sekundär: Wird nach einer Operation geprüft (z.B. Summe über Rows, etc...)
+* Stark: Wird während Transaktion geprüft
+* Schwach: Wird erst nach der Transaktion geprüft
+
+24
+--
+
+Auf jeder Spalte.
+
+25
+--
+
+.. code-block:: sql
 
 	-- anlegen
 	ALTER TABLE x ADD CONSTRAINT myConstraint 'name' NOT NULL;
@@ -213,9 +238,9 @@ Constraints
 	ALTER TABLE x DROP CONSTRAINT myConstraint;
 	-- deaktivieren
 	ALTER TABLE x DISABLE CONSTRAINT myConstraint;
-	-- enable
+	-- aktivieren
 	ALTER TABLE x ENABLE CONSTRAINT myContraint;
-	-- list
+	-- auflisten
 	SELECT constraint_name, constraint_type FROM user_constraints WHERE table_name = 'x';
 
 
