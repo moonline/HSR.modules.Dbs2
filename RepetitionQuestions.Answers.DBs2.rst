@@ -9,103 +9,148 @@ Keine Garantie auf Korrektheit!
 
 DBs1 Repetition
 ===============
-1)
-	* Externe Ebene (Anwendungsebene)
-	* konzeptionelle Ebene bestehend aus
-		* dem konzeptionelle Schema (Abbildung der Realität) und 
-		* dem Datenbankschema (DB Spezifisch)
-	* interne (phyische) Ebene
 
-2) Online Transaction Processing. Sofort Verarbeitung, nicht als Batch über die Nacht irgendwann sondern in Echtzeit
+1
+-
 
-3)
-	* Atomarität: Transaction wird als ganzes oder nicht abgeschlossen
-	* Consistenz: Es gelten immer die Konsistenzbedingungen
-	* Isolation: Transaktionen werden ausgeführt, als wären sie seriell
-	* Durability: Gespeicherte Änderungen gehen nicht irgendwann verloren
+Drei Abstraktionsebenen:
 
-4) .. code-block:: sql
+* Benutzersicht auf die Daten (Externe Ebene)
+* Logische Gesamtsicht auf die Daten (Konzeptionelle Ebene) bestehend aus
+	* dem konzeptionelle Schema (Abbildung der Realität) und 
+	* dem Datenbankschema (DB Spezifisch)
+* Physische Sicht auf die Daten (Interne Ebene)
+
+2
+-
+
+Online Transaction Processing.
+Sofortige Verarbeitung, nicht als Batch über die Nacht irgendwann sondern in Echtzeit.
+Tendenziell viele kurze Queries / Transaktionen und eher einfache Queries.
+Hoch normalisierte Daten.
+
+3
+-
+
+* Atomicity: Transaction wird als ganzes oder gar nicht abgeschlossen.
+* Consistency: Es gelten immer die definierten Konsistenzbedingungen.
+* Isolation: Transaktionen werden ausgeführt, als wären sie seriell gestartet worden.
+* Durability: Gespeicherte Änderungen gehen nicht verloren, auch nicht bei einem Crash oder Stromausfall.
+
+4
+-
+
+.. code-block:: sql
 
 	CREATE TABLE Abschluss (id NUMBER PK, name VARCHAR(50), note NUMBER, studiengang VARCHAR(50));
 	INSERT ...
-	SELECT studiengang, avg(note) as studiengang, note from Abschluss
-	GROUP BY studiengang
+	SELECT studiengang, AVG(note) FROM Abschluss
+	GROUP BY studiengang;
 
 
 PL/SQL
 ======
-5)	
-	* Funktion kann in SQL und PL/SQL ausgeführt werden, SP nur in PL/SQL.
-	* Funktion besitzt Rückgabewert.
 
-6)	
-	* Funktion
-		* Aufbau:
-			.. code-block:: sql
+5
+-
 
-				CREATE OR REPLACE FUNCTION test (note IN NUMBER) IS
-					-- do something
-				END;
-				/
+* Procedures können 0 oder n Resultate zurückgeben, Funktionen nur eines, welches obligatorisch ist.
+* Procedures können IN/OUT Parameter haben, Funktionen nur IN.
+* Procedures erlauben DML, Funktionen nur SELECT.
+* Eine Procedure kann Funktionen aufrufen, eine Funktion aber keine Procedures.
+* Eine Procedure kann im Body Exception Handling mit try-catch implementieren, eine Funktion nicht.
+* Procedures unterstützen Transaktionen, Funktionen nicht.
+* Funktionen können in SELECT Statements verwendet werden, Procedures nicht.
 
+6
+-
 
-		* Benutzung:
-			.. code-block:: sql
+**Funktion**
+
+	Aufbau:
 	
-				SELECT name, test(note) from Abschluss
-
-
-	* Stored Procedure:
-		* Aufbau:
-			.. code-block:: sql
-	
-				CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
-				DECLARE
-					-- declare used variables
-				BEGIN
-					-- programm
-				EXCEPTION
-					-- Exception handling
-				END;
-				/
-
-
-
-		* Benutzung: 
-			.. code-block:: sql
-
-				DECLARE 
-	
-				BEGIN
-					test(10);
-				END;
-				/
-
-
-7) Systemexceptions werden vom System geworfen, Benutzerexceptions vom Benutzer.
 	.. code-block:: sql
 
-		...
-		DECLARE
-			-- benannte Exception
-			Ausnahme1 exception;
-		BEGIN
-			raise Ausnahme1;
-		EXCEPTION
-		...
+		CREATE OR REPLACE FUNCTION test (note IN NUMBER) IS
+			-- do something
+		END;
+		/
 
-
-8) Verbesserung der Performance, Security, Domain Logik
+	Benutzung:
 	
-9) Updateable Views
+	.. code-block:: sql
 
-10)	
-	* Um mittels SQL Systeminformationen oder Funktionen abzurufen, gibt es die Pseudotabelle dual, welche über gewöhnliche Select Statements Systeminformationen zurückgibt. 
-	* Bsp: 
-		.. code-block:: sql
+		SELECT name, test(note) from Abschluss
 
-			select sysdate from DUAL;  
-			select AbteilungSalaer('Entwicklung') from DUAL;
+**Stored Procedure**
+
+	Aufbau:
+	
+	.. code-block:: sql
+
+		CREATE OR REPLACE PROCEDURE test (note IN NUMBER) AS
+		DECLARE
+			-- Declare used variables and exceptions
+		BEGIN
+			-- Body
+		EXCEPTION
+			-- Exception handling
+		END;
+		/
+
+	Benutzung:
+	
+	.. code-block:: sql
+
+		DECLARE 
+
+		BEGIN
+			test(10);
+		END;
+		/
+
+7
+-
+
+Systemexceptions werden durch das DBMS vordefiniert.
+Benutzerexceptions werden in der Deklarations-Section der Stored Procedure vom Benutzer definiert.
+Systemexceptions werden vom System geworfen, Benutzerexceptions vom Benutzer.
+Exceptions werden in der EXCEPTOIN Section behandelt.
+
+.. code-block:: sql
+
+	...
+	DECLARE
+		-- benannte Exception
+		Ausnahme1 exception;
+	BEGIN
+		raise Ausnahme1;
+	EXCEPTION
+	...
+
+8
+-
+
+* Verbesserung der Performance
+* Security
+* Domain Logik
+	
+9
+-
+
+Updateable Views
+
+10
+--
+
+Eigenheit von Oracle.
+Eine Dummy-Tabelle die verwendet werden kann, wenn man von keiner echten Tabelle SELECTen will. zB:
+
+.. code-block:: sql
+
+	SELECT 1+1 FROM DUAL;
+	SELECT sysdate FROM DUAL;  
+	SELECT AbteilungSalaer('Entwicklung') FROM DUAL;
 
 
 Stored Procedures
