@@ -450,25 +450,27 @@ Unter PostgreSQL heissen die entsprechenden Variablen ``OLD`` und ``NEW``.
 * Instead Of: Ersetzen Aktionen. Z.B. DELETE Trigger, der statt dem Löschen der Rows diese nur als gelöscht markiert.
 * Log on/Log off: Triggern bei Anmeldung/Abmeldung am System.
 
+
 Updateable Views
 ----------------
+
 35
---
+..
 
 Temporäre Tabellen werden nicht dauerhaft gespeichert, sondern am Ende der Transaktion wieder gelöscht. Zudem ist die Aktualität der temp. Tabelle unbekannt.
 
 36
---
+..
 
 Weil die unter den Views liegenden Tabellen bereits Indexe enthalten und Indexe auf Views unnötig sind.
 
 37
---
+..
 
 Updateable View sind Views, die über Trigger Änderungen in die dahinter liegenden Tabellen schreiben. Views lassen sich per Default nur updaten, wenn sie keine Joins enthalten und der Primär Schlüssel enthalten ist. Ansonsten kann das DBS die geänderten Rows nicht mehr eindeutig den Rows den dahinter liegenden Tabellen zuordnen.
 
 38
---
+..
 
 Ein Update-Instead-Of Trigger auf der View übernimmt die Update Daten und schreibt sie einzeln in die dahiner liegenden Tabellen.
 
@@ -484,13 +486,14 @@ Ein Update-Instead-Of Trigger auf der View übernimmt die Update Daten und schre
 
 Materialized Views
 ------------------
+
 39
---
+..
 
 Gespeicherte Ausgaben einer View. Die Materialized View aktualisiert sich nicht, sondern stellt eine Snapshot zu einem bestimmten Zeitpunkt von einer View dar.
 
 40
---
+..
 Virtual Tables haben überhaupt nichts mit Views zu tun, auch wenn es danach tönt. Virtual Tables sind Data Wrappers für externe Schnittstellen, z.B. csv.
 
 
@@ -499,25 +502,26 @@ Datenstrukturen
 
 Arrays
 ------
+
 41
---
+..
 
 Arrays sind indexierte Listen von Elementen gleichen Datentyps in einer Datenbankzelle.
 
 42
---
+..
 Sets dürfen das gleiche Element nur einmal beinhalten.
 
 43
---
+..
 Wenn eine dynamische Liste von Werten in der Datenbank abgelegt werden muss, z.B. wenn bei jedem Wareneingang die Anzahl Paletten notiert werden und später daraus der Tagestotal ermittelt werden soll (Jeden Tag sind es unterschiedliche Anzahl Wareneingänge), man jedoch nicht für jeden Wareneingang eine einzelne Zeile anlegen möchte.
 
 44
---
+..
 Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesammte Zelle (das ganze Array) neu geschrieben werden muss.
 
 45
---
+..
 .. code-block:: sql
 		
 	CREATE TABLE wareneingangsStatistik (
@@ -531,14 +535,14 @@ Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesammte Zell
 		
 		
 46
---
+..
 array_to_text()
 	Gibt ein Array als Text zurück.
 unnest()
 	Gibt ein Array als Tabelle zurück
 		
 47
---
+..
 <@ Operator
 	Ermittelt, ob das Linke Array ein Subset des rechten ist. ARRAY[1,2] <@ ARRAY[1,2,3] // true
 = Operator
@@ -547,34 +551,35 @@ unnest()
 	Ermittelt, ob ein Element in beiden Arrays vorkommt ARRAY[1,3] && ARRAY[1,2,3] // true
 
 48
---
+..
 Mit FIND_IN_SET oder unnest und einer subquery falls es etwas aufwändiger ist.
 
 
 Graphen
 -------
+
 49
---
+..
 Graphen sind Netzstrukturen und können zur Abbildung von vermaschten Netzen wie das Internet, Liniennetzen von Verkehrsmitteln oder Verbindungen zwischen Personen, etc. eingesetzt werden.
 Graphen setzen sich zusammen aus Knoten (Nodes/Vertices V), verbunden mit Ecken (Edges E).
 
 50
---
+..
 
 51
---
+..
 Common Table Expression, Eine Sprache, um über die temporäre Tabelle zu iterieren und sie zu verändern, die während eine Transaktion besteht. Im Unterschied zur Subquery ist die CTE viel mächtiger als die Subquery, die einfach eine Query innerhalb einer Query aufruft und keinen schreibenden Zugriff auf die temporäre Tabelle hat.
 
 52
---
+..
 Ein Tree ist ein Graph, der keine Zyklen besitzt und oft gerichtet ist.
 
 53
---
+..
 Trees eignen sich, um Hirarchien (z.B. in Firmen) oder Verwandtschaften abzubilden. Write-once, read-many Szenarien.
 
 54
---
+..
 **Adjazenzliste**
 
 Zu jedem Knoten wird eine Referenz auf den Elternknoten abgespeichert. Die Wurzel besitzt eine NULL Referenz, die Blätter besitzen keine Knoten, die auf sie verweisen.
@@ -628,7 +633,7 @@ Baum mit Knoten, die jeweils einen linken und rechten Wert (minimal und Maximal 
 				
 				
 55
---
+..
 Itree's bestehen aus Pfaden, deren Knoten mit Punkten getrennt sind. Mehrere Pfade ergeben einen Baum.
 
 .. code-block:: sql
@@ -645,30 +650,31 @@ Itree's bestehen aus Pfaden, deren Knoten mit Punkten getrennt sind. Mehrere Pfa
 	SELECT lca(pers) FROM enterprise WHERE id in (4,5); // Liefert gemeinsame Vorgesetzte von robert und paul
 		
 		
-56)
---
+56
+..
 Zur Speicherung von dynamischen Inhalten wie E-mails, Datensätzen mit zusätzlichen Feldern oder Metadaten zu in der DB abgelegten Dateien.
 
 57
---
+..
 .. code-block:: sql
 
 	SELECT query_to_xml(query, TRUE, FALSE);
 	
 	
 58
---
+..
 Mit XPATH können XML Strukturen definiert werden. Mit XQUERY lassen sie sich parsen.
 
 
 Dictionaries
 ------------
+
 59
---
+..
 Dictionaries sind Key-/Value Stores, die es erlauben eine Assoziative Liste von Elementen in einer Datenbankzelle abzulegen.
 
 60
---
+..
 .. code-block:: sql
 	
 	CREATE TABLE settings (id INTEGER, values hstore);
@@ -680,7 +686,7 @@ Dictionaries sind Key-/Value Stores, die es erlauben eine Assoziative Liste von 
 	
 
 61
---
+..
 .. code-block:: sql
 
 	CREATE TABLE content (id, tags);
@@ -694,9 +700,9 @@ Dictionaries sind Key-/Value Stores, die es erlauben eine Assoziative Liste von 
 	
 ORDBMS
 ======
+
 62
 --
-
 Objektrelationale Datenbanken arbeiten wie relational, d.h. sie liefern als Resultat eine Tabelle, ermöglichen es jedoch, in Zellen Objekte mit Eigenschaften und Methoden abzulegen.
 
 
@@ -704,8 +710,7 @@ Objekttypen
 -----------
 
 63
---
-
+..
 Objekttypen sind benutzerdefinierte Typen
 
 .. code-block:: sql
@@ -719,8 +724,7 @@ Objekttypen sind benutzerdefinierte Typen
 		
 		
 64
---
-
+..
 Eine Spalte vom Typ Objekt. Ermöglicht das Ablegen von Objekten in Zellen.
 
 .. code-block:: sql
@@ -743,7 +747,7 @@ Eine Spalte vom Typ Objekt. Ermöglicht das Ablegen von Objekten in Zellen.
 	
 		
 65
---
+..
 
 Objekttabellen repräsentieren ganze Objekte(sind von einem Objekttyp) und sind, objektwertige, referenzierbare Tabellen. Die Rows sind Objekte des zugrundeliegenden Typs und können über OIDs angesprochen werden. Vorteil: Durch die OIDs sind die Zeilen Datenbankweit eindeutig indentifizierbar.
 
@@ -766,8 +770,7 @@ Objekttabellen repräsentieren ganze Objekte(sind von einem Objekttyp) und sind,
 	
 		
 66
---
-
+..
 Wie gewöhnliche SQL Queries
 
 .. code-block:: sql
@@ -776,8 +779,7 @@ Wie gewöhnliche SQL Queries
 		
 		
 67
---
-
+..
 .. code-block:: sql
 		
 	-- Implementation in separat übersetzbarer Typedefinition
@@ -793,8 +795,7 @@ Wie gewöhnliche SQL Queries
 	
 
 68
---
-
+..
 MAP liefert einen Basistyp mit bekannter Sortierreihenfolge zurück, ORDER ermöglicht das implementieren einer eigenen Sortierung.
 
 .. code-block:: sql
@@ -803,8 +804,7 @@ MAP liefert einen Basistyp mit bekannter Sortierreihenfolge zurück, ORDER ermö
 		
 	
 69
---
-
+..
 REF(t) liefert eine Referenz, DEREF(ref) liefert Zugriff auf das Row Object. Referenzen sind nicht fest verdrahtet sondern nur Zeiger, daher muss Für den Objektzugriff Dereferenziert werden.
 
 .. code-block:: sql
@@ -815,13 +815,11 @@ REF(t) liefert eine Referenz, DEREF(ref) liefert Zugriff auf das Row Object. Ref
 	);
 	
 70
---
-
+..
 Schränkt den Werteberech der über die ganze Datenbank eindeutigen OIDs ein auf die betreffende Tabelle (Optimierung).
 
 71
---
-
+..
 .. code-block:: sql
 	
 	INSERT INTO TABLE Family VAUES (
@@ -833,186 +831,241 @@ Schränkt den Werteberech der über die ganze Datenbank eindeutigen OIDs ein auf
 	SELECT DEREF(Parent) FROM Family f WHERE f.Name = "Maria Reihner";
 		
 72
---
+..
 Oracle prüft Referenzen nicht auf Veraltete (Dangling). Daher muss mit ISDANGLING oder ISNOTDANGLING dies selbst abgefragt werden.
 
 
 Varrays und Nested Tables
 -------------------------
-73) VARRAYS sind eindimensionale inline Elementmengen. Genutzt für Elementmengen, die bevorzugt einmal geschrieben und dann nur noch gelesen werden.
-	.. code-block:: sql
-	
-		CREATE Or Replace TYPE addressList AS VARRAY(2) OF VARCHAR2(50);
+73
+..
+VARRAYS sind eindimensionale inline Elementmengen. Genutzt für Elementmengen, die bevorzugt einmal geschrieben und dann nur noch gelesen werden.
+
+.. code-block:: sql
+
+	CREATE Or Replace TYPE addressList AS VARRAY(2) OF VARCHAR2(50);
+
 		
-		
-74) Nested Tables sind Tabellen in Tabellen. Sie sind sinnvoll, wenn in einer Zelle strukturierte Daten abgelegt werden müssen, die nur zu dieser Row gehören. 
-	.. code-block:: sql
-	
-		CREATE TYPE Phonenumbers AS TABLE OF NUMBER;
-		
-		CREATE TABLE Telefonbuch (Name VARCHAR(30), Phones Phonenumbers);
-		
-		-- Nested Table als extern verfügbare Tabelle speichern:
-		CREATE TABLE Telefonbuch (
-			...
-		) NESTED TABLE Phones STORE AS PhoneList;
+74
+..
+Nested Tables sind Tabellen in Tabellen. Sie sind sinnvoll, wenn in einer Zelle strukturierte Daten abgelegt werden müssen, die nur zu dieser Row gehören.
+
+.. code-block:: sql
+
+	CREATE TYPE Phonenumbers AS TABLE OF NUMBER;
+
+	CREATE TABLE Telefonbuch (Name VARCHAR(30), Phones Phonenumbers);
+
+	-- Nested Table als extern verfügbare Tabelle speichern:
+	CREATE TABLE Telefonbuch (
+		...
+	) NESTED TABLE Phones STORE AS PhoneList;
 
 
-75)
-	VARRAY
-		* Eindimensionale Daten
-		* bevorzugt write once, read multiple
-		* Wenn Grösse vorher bekannt
-	Nested Table
-		* Komplexere Daten, die je nach dem auch als direkte Tabelle ansprechbar sein sollen
-		* Wenn Grösse von Angang an nicht bekannt ist
+75
+..
+VARRAY
+	* Eindimensionale Daten
+	* bevorzugt write once, read multiple
+	* Wenn Grösse vorher bekannt
+Nested Table
+	* Komplexere Daten, die je nach dem auch als direkte Tabelle ansprechbar sein sollen
+	* Wenn Grösse von Angang an nicht bekannt ist
 		
-76) Hash Table mässiger Array Store. Über den Key kann der Index eines Elementes ermittelt werden.
+76
+..
+Hash Table mässiger Array Store. Über den Key kann der Index eines Elementes ermittelt werden.
 
 
 ODBS
 ====
-77) Ist die DB sehr nah mit der Anwendung verzahnt (z.B. eine Smartphone App, die Daten nur für sich persistiert), so ist ein ODBS die sinnvollste Anwendung. Auch wenn das Anwendungsumfeld der Datenbank sehr homogen ist (z.B. alles Java), kann eine ODBS sinnvoll sein.
 
-78) Die Relationale Datenbank kann keine verschachtelten Queries ausführen, wie z.B über die Telefonnummern der Kinder eines Mitarbeiters.
+77
+--
+Ist die DB sehr nah mit der Anwendung verzahnt (z.B. eine Smartphone App, die Daten nur für sich persistiert), so ist ein ODBS die sinnvollste Anwendung. Auch wenn das Anwendungsumfeld der Datenbank sehr homogen ist (z.B. alles Java), kann eine ODBS sinnvoll sein.
 
-79) ODBS speichert und liefert Objekt und macht objektorientierte Abfragen. Relationale Datanbanken behandeln Daten immer als Tabellen und liefern auch das Resultat als Tabelle.
+78
+--
+Die Relationale Datenbank kann keine verschachtelten Queries ausführen, wie z.B über die Telefonnummern der Kinder eines Mitarbeiters.
 
-80) 
-	Page Server
-		weiss nichts über die innere Struktur der Objekte und kann auch keine Abfragen darüber machen. Liefert Pages als Ergebnis.
-	Object Server
-		Kennt die innere Struktur der Objekte, besitzt einen Object Manager und kann Abfragen auf Attribute von Objekten machen. Liefert als Ergebnis Objekte.
+79
+--
+ODBS speichert und liefert Objekt und macht objektorientierte Abfragen. Relationale Datanbanken behandeln Daten immer als Tabellen und liefern auch das Resultat als Tabelle.
+
+80
+--
+Page Server
+	weiss nichts über die innere Struktur der Objekte und kann auch keine Abfragen darüber machen. Liefert Pages als Ergebnis.
+Object Server
+	Kennt die innere Struktur der Objekte, besitzt einen Object Manager und kann Abfragen auf Attribute von Objekten machen. Liefert als Ergebnis Objekte.
+
+81
+--
+* Speicherung komplexer Objekte mit Identität, Kapselung, Typen, Klassen und Hirarchien
+* Effiziente Persistierung
+* Concurrency
+* Reliability
+* Deklarative Query Language
+
+82
+--
+* Die Objekte werden nicht transparent (durchsuchbar) abgelegt
+* Referenzen sind ein Problem
+* die Struktur der Objekte (Klasse) wird nicht mit abgelegt.
+* Transaktionen sind nicht möglich
+* Die Objekte werden unvollständig abgelegt
 	
-81)
-	* Speicherung komplexer Objekte mit Identität, Kapselung, Typen, Klassen und Hirarchien
-	* Effiziente Persistierung
-	* Concurrency
-	* Reliability
-	* Deklarative Query Language
+83
+--
+Von einer Wurzel aus werden alle durch Referenzen erreichbare Objekte persistiert
 
-82) 
-	* Die Objekte werden nicht transparent (durchsuchbar) abgelegt
-	* Referenzen sind ein Problem
-	* die Struktur der Objekte (Klasse) wird nicht mit abgelegt.
-	* Transaktionen sind nicht möglich
-	* Die Objekte werden unvollständig abgelegt
+84
+--
+Siehe 80.
+
+85
+--
+Konvertierung der Objektreferenzen im Hauptspeicher in Datenbankreferenzen und umgekehrt
+
+86
+--
+logische OID
+	In der DB wird eine eigene Object ID verwendet -> Mapping notwendig
+physische OID
+	In der DB wird die Objektreferenz vom Hauptspeicher verwendet -> Direkte übernahme, kein Mapping
 	
-83) Von einer Wurzel aus werden alle durch Referenzen erreichbare Objekte persistiert
+87
+--
+Über ein Mapping werden die Datenbankreferenzen der Objekte in in-Memory Referenzen übersetzt.
 
-84) Siehe 80.
+88
+--
+Object Data Management Group specification: Definiert einen Standard für die Objektdarstellung und Abfragesprachen für Objectdatenbanken.
 
-85) Konvertierung der Objektreferenzen im Hauptspeicher in Datenbankreferenzen und umgekehrt
-
-86)
-	logische OID
-		In der DB wird eine eigene Object ID verwendet -> Mapping notwendig
-	physische OID
-		In der DB wird die Objektreferenz vom Hauptspeicher verwendet -> Direkte übernahme, kein Mapping
-		
-87) Über ein Mapping werden die Datenbankreferenzen der Objekte in in-Memory Referenzen übersetzt.
-
-88) Object Data Management Group specification: Definiert einen Standard für die Objektdarstellung und Abfragesprachen für Objectdatenbanken.
-		ODL
-			* Object Definition Language
-			* Attribute und Beziehungn
-			* Verwerbung, Schnittstellen
-			* OIDs
-			* Persistence by Reachability
-			* ACID Transaktionen
-		OQL
-			Object Query Language
+ODL
+	* Object Definition Language
+	* Attribute und Beziehungn
+	* Verwerbung, Schnittstellen
+	* OIDs
+	* Persistence by Reachability
+	* ACID Transaktionen
+OQL
+	Object Query Language
 			
-89) Definiert Objekte
-	.. code-block:: odl
-	
-		class Node {
-			attribute string name;
-			relationship Node parent inverse Node::children; // one-to many
-			relationship set(Node) children inverse Node::parent; // many to one
-		}
-			
-		class Tree (extent allNodes, key nodeId) { // extent: root of reachability tree
-			...
-		}
-		
-		
-90) Eine SQL ähnliche Abfragesprache für Objekte
+89
+--
+Definiert Objekte
 
-91) .. code-block:: oql
+.. code-block:: odl
+
+	class Node {
+		attribute string name;
+		relationship Node parent inverse Node::children; // one-to many
+		relationship set(Node) children inverse Node::parent; // many to one
+	}
+
+	class Tree (extent allNodes, key nodeId) { // extent: root of reachability tree
+		...
+	}
+
+		
+90
+--
+Eine SQL ähnliche Abfragesprache für Objekte
+
+91
+--
+.. code-block:: oql
 
 		select c.name from node n, n.children.children c; // get names of the child-child nodes
 
 		
 db4o
 ----
-92) db4o speichert Java Objekte als Objekte ab und liefert über eine Abfragesprache Objektsets zurück
+92
+..
+db4o speichert Java Objekte als Objekte ab und liefert über eine Abfragesprache Objektsets zurück
 
-93)
-	* SODA Queries: Abfrage anhand von SODA Attribut Bedingungen
-	* Native Queries: Abfrage in der verwendeten Sprache (z.B. java) mit Attribut Bedingungen
-	* Query by Example QBE: Anhand eines Teilobjektes wird der Rest gefunden
+93
+..
+* SODA Queries: Abfrage anhand von SODA Attribut Bedingungen
+* Native Queries: Abfrage in der verwendeten Sprache (z.B. java) mit Attribut Bedingungen
+* Query by Example QBE: Anhand eines Teilobjektes wird der Rest gefunden
 
-94) Jedes öffnen des DB Containers erzeugt eine Transaction, die mit commit oder rollback abgeschlossen werden kann.
+94
+..
+Jedes öffnen des DB Containers erzeugt eine Transaction, die mit commit oder rollback abgeschlossen werden kann.
 
-95) 
-	* aktualisieren: Objekt laden, verändern, db.store(objekt). 
-	* db.delete(objekt)
-	* Kasdade: db4o löscht nur explizit übergebene Objekte. Für Cascade Delete muss dies explizit verlangt werden.
+95
+.. 
+* aktualisieren: Objekt laden, verändern, db.store(objekt).
+* db.delete(objekt)
+* Kasdade: db4o löscht nur explizit übergebene Objekte. Für Cascade Delete muss dies explizit verlangt werden.
 
-96) Lazy Loading von Referenzierten Objekten, bzw. die Ladetiefe in einem Objektgraph und die Grenze, ab wo mit Lazy Loading gearbeitet wird.
+96
+..
+Lazy Loading von Referenzierten Objekten, bzw. die Ladetiefe in einem Objektgraph und die Grenze, ab wo mit Lazy Loading gearbeitet wird.
 
 
 NoSQL Datenbanken
 =================
-97)
-	* Entstanden im 21. Jht
-	* Keine genormte Abfragesprache, oft JSON verwendet
-	* Consistency keine Absolute Bedingungen
-	* Gut verteilbar, skalierbar
-	* Open Source
-	* Schemalos
-	* Ausgelegt auf grosse Datenmengen
+
+97
+--
+* Entstanden im 21. Jht
+* Keine genormte Abfragesprache, oft JSON verwendet
+* Consistency keine Absolute Bedingungen
+* Gut verteilbar, skalierbar
+* Open Source
+* Schemalos
+* Ausgelegt auf grosse Datenmengen
 	
-98) 
-	Key- / Value DB
-		* Speicherung von Schlüsselpaaren
-		* Vorteil: einfach, effizient
-		* Nachteil: Keine Struktur möglich, Value ist für DB unsichtbar (opak)
-	Document DB
-		* Speicherung von Strukturen
-		* Vorteil: Daten können sauber strukturiert werden, Abfragen über Beziehungen möglich, Values sind strukturiert und dokumentiert
-	Column Family Stores
-		* Zusammenfassen von Columnen zu Gruppen
-		* Vorteil: Gruppieren von Columnen
-	Graph DB
-		* Speichern von Beziehungen und Netz Strukturen
-		* Effiziente Algorithmen für Graphverarbeitung und Graphsuchverfahren
-	XML DB
-		* Ablegen von XML Strukturen
-	Objekdatenbanken
-		* Speichern von Objektstrukturen
-		
-99)
-	Sharding
-		Aufteilen der Daten (bsp. Kunden a-f auf Knoten 1, Kunden f-k auf Knoten 2, ...) -> Verbessert Performance
-	Replication
-		Kopieren der Daten auf die Knoten -> Erhöht Availability
-		
-100)
-	CAP
-		consistency, availability, partition tolerance
-	Theorem
-		Es können nur zwei der drei Bedingungen eingehalten werden. Bei relationalen Datenbanken wird vor allem auf consistency und availability gsetzt, bei NoSQL DB's auf availability und partition tolerance.
-		
-101)
-	BASE
-		* BA: basically available. Verfügbarkeit ist von hoher Priorität
-		* S: soft state: Konsistenz ist kein dauerhafter Zustand
-		* Eventual consistent: Daten sind manchmal inkonsistent
-		
-102) Daten werden zerlegt und die zerlegten Teile verteilt berechnet. Anschliessend werden die Resultate verteilt zusammengefasst. Aus den erneuten Resultaten werden zusammen mit andern Resultaten wieder neue generiert. Map Reduce eignet sich sehr gut zur verteilten Berechnung von zerlegbaren Daten.
-	Beispiel Statistik: Besucherstatistik wird in Tage zerlegt. Pro Tag und Angebot werden die Besucher berechnet. Anschliessend werden alle Besucher pro Angebot zusammengefasst und am Schluss die Besucher aller ANgebote.
+98
+-- 
+Key- / Value DB
+	* Speicherung von Schlüsselpaaren
+	* Vorteil: einfach, effizient
+	* Nachteil: Keine Struktur möglich, Value ist für DB unsichtbar (opak)
+Document DB
+	* Speicherung von Strukturen
+	* Vorteil: Daten können sauber strukturiert werden, Abfragen über Beziehungen möglich, Values sind strukturiert und dokumentiert
+Column Family Stores
+	* Zusammenfassen von Columnen zu Gruppen
+	* Vorteil: Gruppieren von Columnen
+Graph DB
+	* Speichern von Beziehungen und Netz Strukturen
+	* Effiziente Algorithmen für Graphverarbeitung und Graphsuchverfahren
+XML DB
+	* Ablegen von XML Strukturen
+Objekdatenbanken
+	* Speichern von Objektstrukturen
+	
+99
+--
+Sharding
+	Aufteilen der Daten (bsp. Kunden a-f auf Knoten 1, Kunden f-k auf Knoten 2, ...) -> Verbessert Performance
+Replication
+	Kopieren der Daten auf die Knoten -> Erhöht Availability
+	
+100
+---
+CAP
+	consistency, availability, partition tolerance
+Theorem
+	Es können nur zwei der drei Bedingungen eingehalten werden. Bei relationalen Datenbanken wird vor allem auf consistency und availability gsetzt, bei NoSQL DB's auf availability und partition tolerance.
+	
+101
+---
+BASE
+	* BA: basically available. Verfügbarkeit ist von hoher Priorität
+	* S: soft state: Konsistenz ist kein dauerhafter Zustand
+	* Eventual consistent: Daten sind manchmal inkonsistent
+	
+102
+---
+Daten werden zerlegt und die zerlegten Teile verteilt berechnet. Anschliessend werden die Resultate verteilt zusammengefasst. Aus den erneuten Resultaten werden zusammen mit andern Resultaten wieder neue generiert. Map Reduce eignet sich sehr gut zur verteilten Berechnung von zerlegbaren Daten.
+
+Beispiel Statistik: Besucherstatistik wird in Tage zerlegt. Pro Tag und Angebot werden die Besucher berechnet. Anschliessend werden alle Besucher pro Angebot zusammengefasst und am Schluss die Besucher aller ANgebote.
 	
 	
 
