@@ -1155,3 +1155,36 @@ PITR (Point in Time Recovery)
 * Wie
 
 
+Indexe
+======
+
+111
+---
+Auf dem Heap werden Collection von Data Pagaes gespeichert, bevor Sie endgültig auf der Platte landen.
+
+112
+---
+Data Pages sind Teilinhalte von Tabellen. Tabellen werden aufgeteilt in ganz viele Pages. Bei DB Operationen sind eine oder mehrere Pages betroffen.
+
+113
+---
+Bei einem Table Scan werden alle Pages einer Tabelle durchsucht. Entsprechend lange dauert der Vorgang.
+
+114
+---
+Point Query
+	Ein einzelner Datensatz wird gesucht (Where id = 100)
+Multipoint Query
+	Mehrere Datensätze werden gesucht (Where name = "Müller")
+Range Query
+	Mehrere Datensätze werden gesucht (Where account > 1000)
+
+
+
+
+
+
+
+
+
+
