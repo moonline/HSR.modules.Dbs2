@@ -1066,9 +1066,92 @@ BASE
 Daten werden zerlegt und die zerlegten Teile verteilt berechnet. Anschliessend werden die Resultate verteilt zusammengefasst. Aus den erneuten Resultaten werden zusammen mit andern Resultaten wieder neue generiert. Map Reduce eignet sich sehr gut zur verteilten Berechnung von zerlegbaren Daten.
 
 Beispiel Statistik: Besucherstatistik wird in Tage zerlegt. Pro Tag und Angebot werden die Besucher berechnet. Anschliessend werden alle Besucher pro Angebot zusammengefasst und am Schluss die Besucher aller ANgebote.
-	
-	
 
-		
-		
-		
+Materialized Views können zur Datenbereitstellung für die Berechnungen oder zum Ablegen der Resultate.
+	
+	
+Backup & Recovery
+=================
+
+103
+---
+Transaction Manager
+	Scheduler
+		Steuert die Datenbank Aktionen. Steuert den Recovery Manager an.
+Speicher Manager
+	Recovery Manager
+		Initiert das Recovery und steuert den Puffer Manager an
+	Puffer Manager
+		* Schreibt und liest aus dem Archiv
+		* schreibt und liest das Log
+		* schreibt und liest das Log Archiv
+		* Steuert den Puffer Speicher
+	DB Archiv
+		Archiv Speicher
+	Log
+		Plattenspeicher
+	Log Archiv
+		Archiv Speicher
+	Puffer Speicher
+		Flüchtiger Speicher für DB, Log, ...
+
+104
+---
+Lokaler Fehler / Transaction Fehler
+	* Deadlock
+	* lokales undo oder Rollback
+Hauptspeicherverlust
+	* Stromausfall
+	* Dateninkonsistenz auf der Platte
+	* Nicht fertige Transaktionen mithilfe des Logs rückgängig machen
+	* fertige Transaktionen wiederholen
+Fehler mit Hintergrundspeicher
+	* Disc Crash
+	* Daten mithilfe des Archivs (Backup) wiederherstellen
+	* Mit dem Log Archiv Daten seit letztem konsistenten Zustand wiederherstellen
+	* Transaktionen seit letztem Log Backup möglicherweise futsch
+
+105
+---
+Überlappende Transaktionen müssen alle zurückgesetzt werden, wenn eine davon crashed. Möglicherweise ein ganzer Rattenschwanz.
+
+SavePoint: Mit neuen Transaktionen wird gewartet, bis alle aktiven fertig sind. Somit wird ein konsistenter Zustand erzeugt.
+
+106
+---
+logisches Backup
+	Datenexport (Dump)
+physisches Backup (Media Recovery)
+	* Plattenspiegelung (Sicherung)
+	* Online Backup
+		Im laufenden Betrieb, Backup nicht Transaktionskonsistent
+	* Offline Betrieb
+		DB offline, Backup konsistenten, Recovery aufwändiger
+
+107
+---
+Media Recovery: Platte zurückspiegeln.
+
+Siehe 106
+
+108
+---
+Inkrementelles Backup: 	Letztes Full Backup + Backups der Änderungen seit dann werden eingespielt.
+
+109
+---
+PITR (Point in Time Recovery)
+
+* Rückgängig machen von versehentlich gelöschten Datensätzen
+* Der Datanbank wird eine Systemfehler zu einem bestimmten Zeitpunkt simuliert.
+* Die DB setzt sich auf einen konsistenten Zeitpuntkt davor zurück.
+
+110
+---
+* Was (User DB + Daten)
+* Wie häufig
+* offline / online
+* Wie lange zurück
+* Wie
+
+
