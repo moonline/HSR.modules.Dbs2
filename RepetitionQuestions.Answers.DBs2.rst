@@ -1172,18 +1172,98 @@ Bei einem Table Scan werden alle Pages einer Tabelle durchsucht. Entsprechend la
 
 114
 ---
+* Indexe ermöglichen eine performantere Abfrage
+* Indexe sind Overhead und verlangsamen die DB
+
+115
+---
 Point Query
 	Ein einzelner Datensatz wird gesucht (Where id = 100)
 Multipoint Query
 	Mehrere Datensätze werden gesucht (Where name = "Müller")
 Range Query
 	Mehrere Datensätze werden gesucht (Where account > 1000)
+Prefix Match Query
+	Mehrere Bedingungen (where name=john and age < 65)
+Extern Query
+	Datensätze mit externer Bedingung werden gesucht (Where age = max(age))
+Group Query
+	Query mit Group By
+Ordering Query
+	Query mit Order by
+Join Query
+	Verknüpfen von mehreren Tabellen
+
+116
+---
+* Scan (alle durchsuchen)
+* Equlity Search
+* Range Search
+* Einfügen
+* Löschen
+
+117
+---
+a
+.
+* Index Sequental Acces Method
+* Daten werden aufsteigend sortiert nach Index, der grösste Schlüssel wird gespeichert
+* schnell: einfügen und suchen
+* langsam: aktualisieren
+
+b
+.
+* Balancierte Mehrweg Bäume
+* Range- und Equality Search
+
+c
+.
+* B-Baum, die Daten sind jedoch nur in den Blättern
+
+d
+.
+* B+Trees, deren Knoten auf einem Cluster verteilt sind
+* Schneller Zugriff über Primärschlüssel
+
+e
+.
+* Verwendet B-Trees
+
+f
+.
+* Hash Index (Ordnet Keys zu Böcken zu)
+* Equality Search
+
+g
+.
+* Ordnet Attributwerte als Bitmuster (Matrix)
+* Für Attribute mit wenigen Werten (z.B. true/false) sehr schnell
+* Datawarehouses
+
+h
+.
+* Tree, bei dem jeweils eine bestimmte Anzahl Kinder über Minimum Bound Rectangles MBR Knoten angebunden sind.
+
+118
+---
+a
+.
+Automatisch erstellter Index auf PK
+
+b
+.
+Manuell erstellter Index auf beliebige Attribute
+
+c
+.
+Mehrere Spalten werden Indexiert, die Reihenfolge ist wichtig für die effizienz von Suchabfragen
+
+d
+.
 
 
-
-
-
-
+119
+---
 
 
 
