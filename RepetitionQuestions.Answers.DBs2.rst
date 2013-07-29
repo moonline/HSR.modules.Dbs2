@@ -1323,5 +1323,50 @@ Merge Join
 	#I/O's = M+N
 
 
+Optimierung
+===========
 
+124
+---
+Batch-Verarbeitung, die mehrere Abfragen auf's Mal schickt.
+
+125
+---
+Um bei bestimmten Abfragen teure Operationen einzusparen. Dafür müssen die redundaten Daten mit Triggern aktualisiert werden. -> Nur sinnvoll, wenn wesentlich mehr lesende als schreibende Operationen.
+
+126
+---
+Optimierung der Thermersetzung der Regelalgebra.
+z.B. Selektionen vor Joins auszuführen und somit viele Join Operationen einzusparen.
+
+127
+---
+Weil die Anzahl Joins nicht linear wächst (quadratisch bei zwei Tabellen, qubisch bei drei, ...). Die Selektion aber linear wächst und sich somit viele unnötige Joins einsparen lassen.
+
+128
+---
+?? Ev. Wegoptimieren von iterativen und rekursiven Abfragen?
+
+129
+---
+Einbezug von:
+* Indexes
+* Statistiken, Analsye
+* Heuristiken, Kosten
+
+130
+---
+Für jede Operation wird berechnet, wie aufwendig sie ist. Die Optimierung versucht, aufwendige Operationen so weit wie möglich zu vermeiden oder mit möglichst wenigen Daten durchzuführen.
+
+131
+---
+Prozentualer Anteil der Tupels der Tabelle, die mit der Query geliefert werden.
+
+#geliefert Tupels / #Total Tupels
+
+132
+---
+Prozentuale Anzahl von Duplikaten.
+
+#duplizierte Tupels / #Total Tupels
 
