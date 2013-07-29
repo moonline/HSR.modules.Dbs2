@@ -1264,6 +1264,63 @@ d
 
 119
 ---
+Heap effizienter als Clustered Index, Unclustered am ineffizientesten
+
+	
+Query Processing
+----------------
+
+120
+...
+1) Syntax checking
+2) Check, ob Tabellen, Spalten, ... vorhanden
+3) Umwandlung in AST
+4) Optimierung anhand von Statistiken
+4) Variable Binding -> Code Generation
+5) Execution
+
+
+Join
+----
+
+121
+...
+Hash Join
+	* Die Rechten Tupels werden in Hash Store abgelegt mit dem dem Hash des FK als Key
+	* Alle linken Tupels werden durchlaufen und zu jedem das passende Tupel aus dem Hash Store gefischt
+Nested Loop Join
+	Für jedes linke Tupel wird jedes rechte Tupel durchlaufen und verglichen
+Nested Loop Block Join
+	* So viele linke Blöcke wie möglich werden in den Speicher geladen
+	* Ein rechter Block wird in den Speicer geladen
+	* Die linken Böcke werden durchlaufen und jedes Tupel mit jedem Tupel des rechten Blockes verglichen
+	* Für jede Kombination von linken Blocksets mit einem rechten Block muss ein Vergleich gemacht werden
+Merge Join
+	* Rechte Tupel müssen sortiert sein
+	* Durch die linken Tupel loopen und das rechte zuordnen (rechte Liste muss nicht durchsucht werden weil sortiert).
+
+120
+...
+Hash Join
+	* Schnell
+	* Braucht Speicher für Hash Store
+Nested Loop Join
+	* Nur für Kleine Tabellen
+Nested Loop Block Join
+	* Wenn Tabellen nicht im Memory Platz finden
+Merge Join
+	* Wenn Daten schon sortiert sind
+
+121
+...
+Hash Join
+	#I/O's = 3*(M+N)
+Nested Loop Join
+
+Nested Loop Block Join
+	 #I/O's = M + N ∗ (M/(B − 2))
+Merge Join
+	#I/O's = M+N
 
 
 
