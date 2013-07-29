@@ -1465,5 +1465,106 @@ Primary Copy (asynchron)
 * Lokale DL Erkennung für lokale DL
 
 
+Replikation
+===========
+
+148
+---
+* Höhere Verfügbarkeit
+* Weniger Trafic
+* Bessere Performance
+* Beugt Datenverlust vor
+
+149
+---
+a
+.
+hochverfügbarer, hight-Performance Cluster
+
+b
+.
+Remote Server, die mit dem gleichen Daten arbeiten. Trafic minimierung durch lokalen DB Server.
+
+c
+.
+OLAP Applikation, die lesend auf die Daten zugreift und durch Replikation jederzeit die neusten Daten besitzt.
+
+d
+.
+Eine zweiten DB Server, der im Falle des Ausfalls den Job übernimmt.
+
+e
+.
+Datenbanken auf Mobilen Geräten, die unterwegs Zugriff auf die Daten brauchen aber keine beständige oder nur eine schmalbandige Verbindung besitzen.
+
+150
+---
+Konsistente Replikation
+	* Write All, read one
+	* 2PC
+	* Erhöht Verfügbarkeit und Fehlertoleranz
+	* Alle Daten sind identisch
+Synchrone Replikation
+	* Master aktualisiert alle Replikate in einer Transaktion
+	* Verfügbarkeit eingeschränkt wenn ein Knoten ausfällt
+Asynchrone Replikation
+	* Master aktualisiert die Knoten nachträglich
+	* Konfikte möglich
+	* Höhere Performance als bei synchroner Replikation
+
+151
+---
+starke Konsistenz
+	Daten müssen jederzeit Konsistent sein
+schwache Konsistenz
+	Daten sind meistens konsistent
+
+152
+---
+Siehe 150
+
+153
+---
+* Eine Konfiguration, in der mehrere Master existieren.
+* High Performance
+* Schwierige Synchronisation
+
+154
+---
+Siehe 150, symetrische und asymetrische Konfiguration.
+
+155
+---
+* Mischung paralleller Änderungen
+* Nachträgliche Konflikt Behandlung (manuell)
+
+156
+---
+Zwei Transaktionen wollen einen Record löschen oder eine will updaten. Im ersten Fall ist bei der zweiten Transaktion kein Record mehr vorhanden und im zweiten Fall wurde der Record geändert während die andere Transaktion eine Löschung versucht.
+
+157
+---
+MS SQL
+	* Snapshot Replication
+	* Transactional Replication (Aktualisierung über Transaktionen)
+	* Merge Replication
+Oracle
+	* Materialized Views
+	* Multimaster (merge)
+Mongo DB
+	* Replication Server mit automatischem failover
+		* Automatisches Sharding
+		* Eventuell Konsistent
+
+158
+---
+Vertikales Partitionieren: Datensätze werden aufgesplittet und auf die Knoten verteilt
+
+159
+---
+* Jederzeit starke Konsistenz erfordert starke synchronisation, locking, ...
+* Starke Konsistenz verlangsamt das System merklich
+* Mit schwacher Konsistenz ist High Performance möglich
+
 
 
