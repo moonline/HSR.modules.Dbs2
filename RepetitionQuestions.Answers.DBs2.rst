@@ -1370,3 +1370,100 @@ Prozentuale Anzahl von Duplikaten.
 
 #duplizierte Tupels / #Total Tupels
 
+
+Verteilte DBSM
+==============
+
+133
+---
+Ein Datenbanksystem, dessen Daten über mehrere Knoten verteilt sind. Der Anwender sieht trotzdem nur ein System.
+Je nach Ausführung können auch das Schema und die Software verteilt sein oder sogar unterschiedliche Technologien auf unterschiedlichen Knoten zum Einsatz kommen.
+
+134
+---
+Der Anwender bekommt nichts von der Verteilung mit. Seine Sicht auf die DB ist so, als wäre sie nicht verteilt. Er schreibt seine Queries über Relationen und nicht über die Verteilten Bereiche.
+
+135
+---
+Sie werden aus ganze Transaktion oder nicht ausgeführt, auch wenn sie über mehrere Knoten laufen.
+
+136
+---
+Heterogenes VDBMS
+	Unterschiedliche SW und Schemas kommen auf den unterschiedlichen Knoten zum Einsatz
+Homogenes VDBMS
+	 Auf allen Knoten läuft die gleihe SW und es kommt ein globales Schema zum Einsatz.
+
+137
+---
+MultiDBMS bestehen aus mehreren einzelnen DBMS.
+
+eng gekoppelt
+	Es kommt ein globales Schema zum Einsatz. Globale User sehen nur dieses Schema.
+lose gekoppelt
+	Es kommt auf jedem DBMS ein eigenes Schema zum Einsatz. Globale User sehen die einzelnen Schemas.
+
+138
+---
+horizontale Fragmentierung
+	Die Tupels werden als Gruppen auf einzelne Nodes verteilt.
+vertikale Fragmentierung
+	Die Spalten der Tabelle werden auf verschiedene Nodes verteilt -> Die Tupels sind verstreut über mehrere Nodes.
+
+139
+---
+Mehrfaches vorhandensein der gleichen Daten oder sogar ganzen DBMS.
+
+140
+---
+Fragmentierung
+	Daten werden in Fragmente aufgeteilt, die ähnliche Zugriffsverhalten aufweisen
+Allokation
+	Die Fragmente werden einem Node/Station zugewiesen
+
+141
+---
+Ein Koordinator übernimmt die Steuerung des globalen Commits und des allfälligen Rollbacks.
+
+Mit dem Two Phase Commit 2PC Protokoll wird die Atomarität von globalen Transaktionen gewährleistet.
+
+142
+---
+1) Koordinator holt o.k. für commit bei allen Nodes ein -> wenn kein o.k.-> rollback
+2) Koordinator schickt commit an alle Nodes
+
+143
+---
+Standartisierte Schnittstelle zwischen Komponenten in verteilten Systemen
+
+144
+---
+* Globaler Lockmanager
+* Lokale Lockmanager, die von einem globalen Algoithmus gesteuert werden
+
+145
+---
+
+
+146
+---
+Read One / Write All
+	Es wird synchron auf alle geschrieben
+Majority protocol
+	* Lesen oder Schreiben eines Objektes verlangt Zugriff auf Mehrheit der Replikate
+	* jedes Replikat kann gleichzeitig von mehreren Transaktionen gelesen, jedoch nur von einer Transaktion geändert werden
+Quorum consensus
+	Gleiches Prinzip wie Majority, einfach mit fest definierten Anzahl Stimmen
+Primary Copy (asynchron)
+	Nach jedem Commit werden die Daten auf der Kopie asynchron aktualisiert
+
+147
+---
+* Globale Dead Lock erkennung für globale DL
+	* Erkennung über Timeout
+	* Erkennung über globalen Wartegraph
+* Lokale DL Erkennung für lokale DL
+
+
+
+
