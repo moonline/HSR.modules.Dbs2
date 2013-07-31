@@ -514,24 +514,27 @@ Sets dürfen das gleiche Element nur einmal beinhalten.
 
 43
 ..
-Wenn eine dynamische Liste von Werten in der Datenbank abgelegt werden muss, z.B. wenn bei jedem Wareneingang die Anzahl Paletten notiert werden und später daraus der Tagestotal ermittelt werden soll (Jeden Tag sind es unterschiedliche Anzahl Wareneingänge), man jedoch nicht für jeden Wareneingang eine einzelne Zeile anlegen möchte.
+ZB wenn man in einer Blog Engine die Tags zu einem Artikel ablegen will.
+
+Oder wenn eine dynamische Liste von Werten in der Datenbank abgelegt werden muss, z.B. wenn bei jedem Wareneingang die Anzahl Paletten notiert werden und später daraus der Tagestotal ermittelt werden soll (Jeden Tag sind es unterschiedliche Anzahl Wareneingänge), man jedoch nicht für jeden Wareneingang eine einzelne Zeile anlegen möchte.
 
 44
 ..
-Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesammte Zelle (das ganze Array) neu geschrieben werden muss.
+Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesamte Zelle (das ganze Array) neu geschrieben werden muss.
 
 45
 ..
 .. code-block:: sql
 		
 	CREATE TABLE wareneingangsStatistik (
-		DATE datum,
-		INTEGER[] anzahlPaletten
+		datum DATE,
+		anzahlPaletten INTEGER[]
 	);
 	
-	INSERT INTO wareneingangsStatistik (12.04.13, ARRAY[5,6,7,3]);
+	INSERT INTO wareneingangsStatistik VALUES ('2013-04-12', '{5,6,7,3}');
 	
 	SELECT anzahlPaletten FROM wareneingangsStatistik; // {5,6,7,3}
+	SELECT anzahlPaletten[3] FROM wareneingangsStatistik; // 7
 		
 		
 46
@@ -539,21 +542,62 @@ Der schreibende Zugriff auf Arrays ist aufwendig, weil jeweils die gesammte Zell
 array_to_text()
 	Gibt ein Array als Text zurück.
 unnest()
-	Gibt ein Array als Tabelle zurück
+	Gibt ein Array als Tabelle zurück. Beispiel:
+	
+	.. code-block:: sql
+	
+		SELECT anzahlPaletten FROM wareneingangsStatistik;
+		 anzahlpaletten 
+		----------------
+		 {5,6,7,3}
+		(1 Zeile)
+		
+		SELECT unnest(anzahlPaletten) FROM wareneingangsStatistik;
+		 unnest 
+		--------
+		      5
+		      6
+		      7
+		      3
+		(4 Zeilen)
+
 		
 47
 ..
 <@ Operator
-	Ermittelt, ob das Linke Array ein Subset des rechten ist. ARRAY[1,2] <@ ARRAY[1,2,3] // true
+	Ermittelt, ob das Linke Array ein Subset des rechten ist.
+	
+	.. code-block:: sql
+	
+		SELECT '{1}' <@ ARRAY[1,2,3]; // t
+		SELECT '{1,2,3}' <@ ARRAY[1,2,3]; // t
+		SELECT '{3,1}' <@ ARRAY[1,2,3]; // t
+		SELECT '{}' <@ ARRAY[1,2,3]; // t
+		SELECT '{4}' <@ ARRAY[1,2,3]; // f
+		
 = Operator
-	Vergleicht zwei Arrays
+	Vergleicht zwei Arrays.
+	
+	.. code-block:: sql
+	
+		SELECT ARRAY[1,2,3] = ARRAY[1,2,3]; // t
+		SELECT ARRAY[1,2,3] = ARRAY[1,3,2]; // f
+		
 && Operator
-	Ermittelt, ob ein Element in beiden Arrays vorkommt ARRAY[1,3] && ARRAY[1,2,3] // true
+	Ermittelt, ob ein Element in beiden Arrays vorkommt.
+	
+	.. code-block:: sql
+	
+		SELECT ARRAY[1,2,3] && ARRAY[1,2,3]; // t
+		SELECT ARRAY[1,2,3] && ARRAY[1,3,2]; // t
+		SELECT ARRAY[1,2] && ARRAY[2,3]; // t
 
 48
 ..
-Mit FIND_IN_SET oder unnest und einer subquery falls es etwas aufwändiger ist.
 
+- SELECT * FROM wareneingangsstatistik WHERE 7 = ANY(anzahlpaletten);
+- SELECT * FROM wareneingangsstatistik WHERE '{7}' <@ anzahlpaletten;
+- Alternativ mit Subquery und `unnest`
 
 Graphen
 -------
