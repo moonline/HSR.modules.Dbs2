@@ -630,12 +630,12 @@ Zu jedem Knoten wird eine Referenz auf den Elternknoten abgespeichert. Die Wurze
 
 .. code-block:: sql
 	
-	CREATE TABLE tree (id, name, parent);
-	INSERT INTO TABLE tree (1, "CEO", NULL);
-	INSERT INTO TABLE tree (2, "chef technic", 1);
-	INSERT INTO TABLE tree (3, "chef accounts", 1);
-	INSERT INTO TABLE tree (4, "robert, the mechanic", 2);
-	INSERT INTO TABLE tree (5, "paul, the bimbo", 2);
+	CREATE TABLE tree(id INT UNIQUE, name VARCHAR(255), parent INT);
+	INSERT INTO TABLE tree (1, 'CEO', NULL);
+	INSERT INTO TABLE tree (2, 'chef technic', 1);
+	INSERT INTO TABLE tree (3, 'chef accounts', 1);
+	INSERT INTO TABLE tree (4, 'robert, the mechanic', 2);
+	INSERT INTO TABLE tree (5, 'paul, the bimbo', 2);
 	
 	SELECT name FROM tree WHERE parent = 2;
 			
