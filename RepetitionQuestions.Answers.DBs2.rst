@@ -642,39 +642,44 @@ Zu jedem Knoten wird eine Referenz auf den Elternknoten abgespeichert. Die Wurze
 
 **Nested Set Model**
 
-Baum mit Knoten, die jeweils einen linken und rechten Wert (minimal und Maximal Knoten Id der Childes) und eine Referenz auf einen Parent Knoten besitzen. Beim Einfügen oder Entfernen muss unter Umständen der Baum umsortiert werden und die Werte für links und rechts müssen angepasst werden. Der linke Wert ist immer kleiner als der rechte. Beider Werte sind grösser als der linke Wert der Elternmenge und kleiner als der Rechte.
+Baum mit Knoten, die jeweils einen linken und rechten Wert (minimal und Maximal Knoten Id der Childes) besitzen.
+Der linke Wert ist immer kleiner als der rechte.
+Beide Werte sind grösser als der linke Wert der Elternmenge und kleiner als der Rechte.
+
+Die Idee der Nummerierung basiert auf dem depth first tree traversal.
+Die Nummern können als Counter gesehen werden, der jeweils bei Pre-Node und Post-Node hochzählt.
+
+.. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/NestedSetModel.svg/350px-NestedSetModel.svg.png
+
+Der Vorteil dieser Speicherung ist, dass jeder mögliche Subtree mit einem einzigen Query abgefragt werden kann.
+Der Nachteil ist, dass beim Einfügen unter Umständen alle Left / Right Werte neu geschrieben werden müssen.
+Lesevorgänge sind also sehr "günstig", Schreibvorgänge unter Umständen sehr "teuer".
 
 .. code-block:: sql
 	
-	CREATE TABLE tree (id, name, parent, left, right);
-	INSERT INTO tree (1, "CEO", NULL, 1, 7);
-	INSERT INTO tree (2, "chef technic", 1, 2, 8);
-	INSERT INTO tree (3, "chef accounts", 1, 3, 4);
-	INSERT INTO tree (4, "robert, the mechanic", 2, 4, 7);
-	INSERT INTO tree (5, "paul, the bimbo", 2, 5, 6);
+	CREATE TABLE tree (id INT UNIQUE, name VARCHAR(255), lft INT UNIQUE, rgt INT UNIQUE);
+	INSERT INTO tree VALUES (1, 'CEO', 1, 10);
+	INSERT INTO tree VALUES (2, 'Chief Technology', 2, 7);
+	INSERT INTO tree VALUES (3, 'Chief Accounts', 8, 9);
+	INSERT INTO tree VALUES (4, 'Mike the mechanic', 3, 4);
+	INSERT INTO tree VALUES (5, 'Bob the bimbo', 5, 6);
 	
-	SELECT name FROM tree WHERE parent = 2;
+	// Select full tree
+	SELECT * FROM tree WHERE lft >= 1 AND rgt <= 10;
 	
-	// 1 CEO l:1, r:2
-		
-	// 1 CEO l:1, r:4
-	//   2 chef technic l:2, r: 3
+	// Select only members of technology team
+	SELECT * FROM tree WHERE lft > 2 AND rgt < 7;
 	
-	// 1 CEO l:1, r:5
-	//   2 chef technic l:2, r: 3
-	//   3 chef accounts l:3, r:4
-	
-	// 1 CEO l:1, r:7
-	//   2 chef technic l:2, r: 6
-	//     4 robert l:4, r:5
-	//   3 chef accounts l:3, r:4
-	
-	// 1 CEO l:1, r:7
-	//   2 chef technic l:2, r: 8
-	//     4 robert l:4, r:7
-	//     5 paul, l:5, r:6
-	//   3 chef accounts l:3, r:4
-				
+	// Select all employees below the CEO without known left/right IDs
+	SELECT * FROM tree
+	WHERE lft > (SELECT lft FROM tree WHERE name = 'CEO')
+	AND rgt < (SELECT rgt FROM tree WHERE name = 'CEO');
+
+Mögliche Erweiterungen sind die Kombination mit dem Adjazenzlisten-Modell (bei welchem jedes Element noch eine Parent-Referenz enthält),
+oder das Hinzufügen eines "Depth" Attributes welches rekursive Queries vereinfacht.
+
+Mit Rekursiven CTEs kann man zudem zusätzliche "Magic" betreiben.
+Siehe http://explainextended.com/2010/03/02/postgresql-using-recursive-functions-in-nested-sets/
 				
 55
 ..
