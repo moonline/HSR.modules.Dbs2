@@ -664,13 +664,13 @@ Lesevorgänge sind also sehr "günstig", Schreibvorgänge unter Umständen sehr 
 	INSERT INTO tree VALUES (4, 'Mike the mechanic', 3, 4);
 	INSERT INTO tree VALUES (5, 'Bob the bimbo', 5, 6);
 	
-	// Select full tree
+	-- Select full tree
 	SELECT * FROM tree WHERE lft >= 1 AND rgt <= 10;
 	
-	// Select only members of technology team
+	-- Select only members of technology team
 	SELECT * FROM tree WHERE lft > 2 AND rgt < 7;
 	
-	// Select all employees below the CEO without known left/right IDs
+	-- Select all employees below the CEO without known left/right IDs
 	SELECT * FROM tree
 	WHERE lft > (SELECT lft FROM tree WHERE name = 'CEO')
 	AND rgt < (SELECT rgt FROM tree WHERE name = 'CEO');
