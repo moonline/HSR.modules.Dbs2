@@ -674,6 +674,12 @@ Lesevorgänge sind also sehr "günstig", Schreibvorgänge unter Umständen sehr 
 	SELECT * FROM tree
 	WHERE lft > (SELECT lft FROM tree WHERE name = 'CEO')
 	AND rgt < (SELECT rgt FROM tree WHERE name = 'CEO');
+	
+	-- Same result as above, but with CTE
+	WITH ceo AS (SELECT lft, rgt FROM tree WHERE name = 'CEO')
+	SELECT * FROM tree
+	WHERE lft > (SELECT lft FROM ceo)
+	AND rgt < (SELECT rgt FROM ceo);
 
 Mögliche Erweiterungen sind die Kombination mit dem Adjazenzlisten-Modell (bei welchem jedes Element noch eine Parent-Referenz enthält),
 oder das Hinzufügen eines "Depth" Attributes welches rekursive Queries vereinfacht.
