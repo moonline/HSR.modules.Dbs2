@@ -55,7 +55,6 @@ PL/SQL
 -
 
 * Procedures können 0 oder n Resultate zurückgeben, Funktionen nur eines, welches obligatorisch ist.
-* Procedures können IN/OUT Parameter haben, Funktionen nur IN.
 * Procedures erlauben DML, Funktionen nur SELECT.
 * Eine Procedure kann Funktionen aufrufen, eine Funktion aber keine Procedures.
 * Eine Procedure kann im Body Exception Handling mit try-catch implementieren, eine Funktion nicht.
