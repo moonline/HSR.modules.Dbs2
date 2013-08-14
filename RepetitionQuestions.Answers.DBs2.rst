@@ -381,41 +381,52 @@ Unter PostgreSQL heissen die entsprechenden Variablen ``OLD`` und ``NEW``.
 
 .. code-block:: sql
 	
-	CREATE OR REPLACE TRIGGER check
-	BEFORE INSERT ON messdaten
-	FOR EACH ROW
-	AS
+	-- Create table
+	CREATE TABLE data (location INTEGER, temperature NUMERIC);
+	CREATE TABLE high_temperatures (location INTEGER, temperature NUMERIC);
+	
+	-- Create trigger
+	CREATE OR REPLACE TRIGGER verify_temperature
+	BEFORE INSERT
+		ON data
+		FOR EACH ROW
 	BEGIN
-		IF :new.temperatur > 100 THEN
-			-- planet destroyed or failure -> don't insert
-			INSERT INTO log (:new.id, :new.temperature);
+		IF :NEW.temperature > 100 THEN
+			-- Log high temperature
+			INSERT INTO high_temperatures VALUES (:NEW.location, :NEW.temperature);
 		END IF;
 	END;
 	/
+	
+(SQL Fiddle: http://sqlfiddle.com/#!4/71b29/1)
 	
 **PostgreSQL**
 
 .. code-block:: sql
 
+	-- Create table
+	CREATE TABLE data (location INTEGER, temperature NUMERIC);
+	CREATE TABLE high_temperatures (location INTEGER, temperature NUMERIC);
+	
 	-- First, create trigger function
 	CREATE OR REPLACE FUNCTION verify_temperature() RETURNS trigger AS
 	$$
 	BEGIN
-		-- If temperature is too high, write log and return OLD version of row.
-		-- Otherwise return NEW version of row.
-		IF NEW.temperatur > 100 THEN
-			INSERT INTO log VALUES (NEW.id, NEW.temperatur);
-			RETURN OLD;
-		ELSE
-			RETURN NEW;
+		-- Log high temperatures
+		IF NEW.temperature > 100 THEN
+			INSERT INTO high_temperatures VALUES (NEW.location, NEW.temperature);
 		END IF;
+		RETURN NEW;
 	END
 	$$ LANGUAGE plpgsql;
+	//
 	
 	CREATE TRIGGER mycheck
-	BEFORE INSERT ON messdaten
+	BEFORE INSERT ON data
 	FOR EACH ROW
 	EXECUTE PROCEDURE verify_temperature();
+	
+(SQL Fiddle: http://sqlfiddle.com/#!4/71b29/1)
 
 
 32
